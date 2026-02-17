@@ -10,7 +10,10 @@ interface Props {
   closeModal: () => void;
 }
 
+import { useData } from "../../context/DataContext";
+
 export default function Create({ isOpen, closeModal }: Props) {
+  const { addActivity, incrementStat } = useData();
   const [form, setForm] = useState({
     name: "",
     address: "",
@@ -51,19 +54,26 @@ export default function Create({ isOpen, closeModal }: Props) {
   };
 
   const handleSubmit = () => {
-    const payload = {
-      ...form,
-      capacity: Number(form.capacity),
-      constructionYear: Number(form.constructionYear),
-      zones: form.zones.map((z) => ({
-        name: z.name,
-        capacity: Number(z.capacity),
-        description: z.description,
-      })),
-    };
-
-    console.log("Submitting:", payload);
+    addActivity("add", `New stadium '${form.name || "Unnamed"}' construction complete`);
+    incrementStat("stadiums");
     closeModal();
+    // Reset form
+    setForm({
+      name: "",
+      address: "",
+      cityId: "",
+      countryId: "",
+      capacity: "",
+      constructionYear: "",
+      description: "",
+      zones: [
+        {
+          name: "",
+          capacity: "",
+          description: "",
+        },
+      ],
+    });
   };
 
   const countryOptions = [

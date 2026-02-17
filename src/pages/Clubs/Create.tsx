@@ -10,7 +10,10 @@ interface Props {
   closeModal: () => void;
 }
 
+import { useData } from "../../context/DataContext";
+
 export default function Create({ isOpen, closeModal }: Props) {
+  const { addActivity, incrementStat } = useData();
   const [form, setForm] = useState({
     name: "",
     abbreviation: "",
@@ -26,8 +29,19 @@ export default function Create({ isOpen, closeModal }: Props) {
   };
 
   const handleSubmit = () => {
-    console.log("Submitting Team:", form);
+    addActivity("add", `New team '${form.name || "Unnamed"}' registered to the league`);
+    incrementStat("teams");
     closeModal();
+    // Reset form
+    setForm({
+      name: "",
+      abbreviation: "",
+      teamType: "NATIONAL",
+      scope: "NATIONAL",
+      countryId: "",
+      continent: "",
+      description: "",
+    });
   };
 
   const countryOptions = [

@@ -22,7 +22,10 @@ interface Stadium {
   zones: Zone[];
 }
 
+import { useData } from "../../context/DataContext";
+
 export default function Create({ isOpen, closeModal }: Props) {
+  const { addActivity, incrementStat } = useData();
   const [form, setForm] = useState({
     dateTime: "",
     status: "",
@@ -64,8 +67,22 @@ export default function Create({ isOpen, closeModal }: Props) {
   };
 
   const handleSubmit = () => {
-    console.log("Submitting Match:", form);
+    addActivity("success", `New match scheduled between team #${form.homeTeamId} and #${form.awayTeamId}`);
+    incrementStat("matches");
     closeModal();
+    // Reset form
+    setForm({
+      dateTime: "",
+      status: "",
+      matchNumber: "",
+      attendance: 0,
+      referee: "",
+      stadiumId: "",
+      homeTeamId: "",
+      awayTeamId: "",
+      competitionId: "",
+      zonePricings: [],
+    });
   };
 
   const statusOptions = [
@@ -86,7 +103,7 @@ export default function Create({ isOpen, closeModal }: Props) {
               <DatePicker
                 id="dateTime"
                 placeholder="Select Date & Time"
-                onChange={(dates, dateString) => setForm({ ...form, dateTime: dateString })}
+                onChange={(_, dateString) => setForm({ ...form, dateTime: dateString })}
               />
             </div>
 

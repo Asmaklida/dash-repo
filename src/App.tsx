@@ -13,32 +13,35 @@ import { countryRoutes } from "./pages/Country/routes";
 import { studiumRoutes } from "./pages/Studium/routes";
 import { userProfileRoutes } from "./pages/UserProfiles/routes";
 import { UserProvider } from "./context/UserContext";
+import { DataProvider } from "./context/DataContext";
 
 export default function App() {
   return (
     <UserProvider>
-      <Router>
-        <ScrollToTop />
-        <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            <Route index path="/" element={<Home />} />
-            {competitionsroutes}
-            {nationalTeamroutes}
-            {clubroutes}
-            {matchRoutes}
-            {cityRoutes}
-            {countryRoutes}
-            {studiumRoutes}
-            {userProfileRoutes}
-          </Route>
+      <DataProvider>
+        <Router>
+          <ScrollToTop />
+          <Routes>
+            {/* Dashboard Layout */}
+            <Route element={<AppLayout />}>
+              <Route index path="/" element={<Home />} />
+              {competitionsroutes}
+              {nationalTeamroutes}
+              {clubroutes}
+              {matchRoutes}
+              {cityRoutes}
+              {countryRoutes}
+              {studiumRoutes}
+              {userProfileRoutes}
+            </Route>
 
-          {/* Auth Layout */}
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
+            {/* Auth Layout */}
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
 
-        </Routes>
-      </Router>
+          </Routes>
+        </Router>
+      </DataProvider>
     </UserProvider>
   );
 }

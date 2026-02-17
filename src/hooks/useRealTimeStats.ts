@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useData } from "../context/DataContext";
 
 export interface StatValue {
     value: number;
@@ -15,36 +16,37 @@ export interface RealTimeStats {
 }
 
 export const useRealTimeStats = () => {
+    const { stats: appStats } = useData();
     const [stats, setStats] = useState<RealTimeStats>({
-        competitions: { value: 24, change: "+12%" },
-        teams: { value: 156, change: "+8%" },
-        matches: { value: 342, change: "+23%" },
-        stadiums: { value: 89, change: "+5%" },
-        cities: { value: 67, change: "+15%" },
-        countries: { value: 45, change: "+3%" },
+        competitions: { value: appStats.competitions, change: "+0%" },
+        teams: { value: appStats.teams, change: "+0%" },
+        matches: { value: appStats.matches, change: "+0%" },
+        stadiums: { value: appStats.stadiums, change: "+0%" },
+        cities: { value: appStats.cities, change: "+0%" },
+        countries: { value: appStats.countries, change: "+0%" },
     });
 
     useEffect(() => {
-        const interval = setInterval(() => {
-            setStats((prev) => {
-                // Randomly simulate a change in matches or teams
-                const updateMatches = Math.random() > 0.7;
-                const updateTeams = Math.random() > 0.9;
-
-                return {
-                    ...prev,
-                    matches: updateMatches
-                        ? { value: prev.matches.value + 1, change: "+24%" }
-                        : prev.matches,
-                    teams: updateTeams
-                        ? { value: prev.teams.value + 1, change: "+9%" }
-                        : prev.teams,
-                };
-            });
-        }, 5000); // Update every 5 seconds
-
-        return () => clearInterval(interval);
-    }, []);
+        setStats((prev) => ({
+            ...prev,
+            competitions: {
+                value: appStats.competitions,
+                change: `+${((appStats.competitions - 20) / 20 * 100).toFixed(1)}%`
+            },
+            teams: {
+                value: appStats.teams,
+                change: `+${((appStats.teams - 150) / 150 * 100).toFixed(1)}%`
+            },
+            matches: {
+                value: appStats.matches,
+                change: `+${((appStats.matches - 340) / 340 * 100).toFixed(1)}%`
+            },
+            stadiums: {
+                value: appStats.stadiums,
+                change: `+${((appStats.stadiums - 85) / 85 * 100).toFixed(1)}%`
+            }
+        }));
+    }, [appStats]);
 
     return stats;
 };
