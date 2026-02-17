@@ -85,11 +85,10 @@ export default function PaginatedTable<T>({
                 key={i}
                 onClick={() => onPageChange(i)}
                 className={`h-9 w-9 rounded-lg text-sm font-medium border transition
-                ${
-                  isActive
+                ${isActive
                     ? "bg-primary text-white border-primary"
                     : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 dark:bg-transparent dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
-                }
+                  }
                 `}
               >
                 {i + 1}

@@ -1,10 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Button from "../../components/ui/button/Button";
 import Badge from "../../components/ui/badge/Badge";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 import { useModal } from "../../hooks/useModal";
+import { useLocation } from "react-router";
 import Create from "./Create";
 
 interface CountryData {
@@ -69,6 +70,15 @@ const ITEMS_PER_PAGE = 5;
 export const Show = () => {
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(DATA.length / ITEMS_PER_PAGE);
+  const { isOpen, openModal, closeModal } = useModal();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openModal) {
+      openModal();
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, openModal]);
 
   const paginatedData = useMemo(() => {
     const start = (page - 1) * ITEMS_PER_PAGE;
@@ -93,18 +103,17 @@ export const Show = () => {
         return "light";
     }
   };
-  const { isOpen, openModal, closeModal } = useModal();
 
   return (
     <>
-      <PageMeta title="Country | chritickets" description="All Country" />
-      <PageBreadcrumb pageTitle="Country" />
+      <PageMeta title="Cities | chritickets" description="All Cities" />
+      <PageBreadcrumb pageTitle="Cities" />
 
       <div className="space-y-6">
         <ComponentCard
-          title="All Studuims"
+          title="All Cities"
           addButton={{
-            label: "Add Transaction +",
+            label: "Add City +",
             onClick: openModal,
           }}
         >
@@ -150,11 +159,10 @@ export const Show = () => {
                   key={p}
                   onClick={() => setPage(p)}
                   className={`h-9 w-9 rounded-lg text-sm font-medium border transition
-                ${
-                  isActive
-                    ? "bg-primary text-white border-primary"
-                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 dark:bg-transparent dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
-                }`}
+                ${isActive
+                      ? "bg-primary text-white border-primary"
+                      : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 dark:bg-transparent dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
+                    }`}
                 >
                   {p}
                 </button>

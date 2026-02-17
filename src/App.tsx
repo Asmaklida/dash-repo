@@ -11,10 +11,12 @@ import { matchRoutes } from "./pages/Matchs/routes";
 import { cityRoutes } from "./pages/City/routes";
 import { countryRoutes } from "./pages/Country/routes";
 import { studiumRoutes } from "./pages/Studium/routes";
+import { userProfileRoutes } from "./pages/UserProfiles/routes";
+import { UserProvider } from "./context/UserContext";
 
 export default function App() {
   return (
-    <>
+    <UserProvider>
       <Router>
         <ScrollToTop />
         <Routes>
@@ -28,6 +30,7 @@ export default function App() {
             {cityRoutes}
             {countryRoutes}
             {studiumRoutes}
+            {userProfileRoutes}
           </Route>
 
           {/* Auth Layout */}
@@ -36,6 +39,6 @@ export default function App() {
 
         </Routes>
       </Router>
-    </>
+    </UserProvider>
   );
 }

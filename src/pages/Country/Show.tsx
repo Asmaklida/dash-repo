@@ -1,10 +1,11 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Badge from "../../components/ui/badge/Badge";
 import Button from "../../components/ui/button/Button";
 import PageMeta from "../../components/common/PageMeta";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 import { useModal } from "../../hooks/useModal";
+import { useLocation } from "react-router";
 import Create from "./Create";
 
 interface Country {
@@ -28,6 +29,15 @@ const ITEMS_PER_PAGE = 4;
 function Show() {
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(DATA.length / ITEMS_PER_PAGE);
+  const { isOpen, openModal, closeModal } = useModal();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.openModal) {
+      openModal();
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state, openModal]);
 
   const paginatedData = useMemo(() => {
     const start = (page - 1) * ITEMS_PER_PAGE;
@@ -53,8 +63,6 @@ function Show() {
     }
   };
 
-  const { isOpen, openModal, closeModal } = useModal();
-
   return (
     <>
       <PageMeta title="Country | chritickets" description="All Country" />
@@ -62,9 +70,9 @@ function Show() {
 
       <div className="space-y-6">
         <ComponentCard
-          title="All Studuims"
+          title="All Countries"
           addButton={{
-            label: "Add Transaction +",
+            label: "Add Country +",
             onClick: openModal,
           }}
         >
@@ -109,11 +117,10 @@ function Show() {
                     key={p}
                     onClick={() => setPage(p)}
                     className={`h-9 w-9 rounded-lg text-sm font-medium border transition
-                ${
-                  isActive
-                    ? "bg-primary text-white border-primary"
-                    : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 dark:bg-transparent dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
-                }`}
+                ${isActive
+                        ? "bg-primary text-white border-primary"
+                        : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 dark:bg-transparent dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
+                      }`}
                   >
                     {p}
                   </button>
