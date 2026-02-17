@@ -32,13 +32,13 @@ export default function PaginatedTable<T>({
       {/* Table */}
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="border-y border-gray-100 dark:border-gray-800">
+          <TableHeader className="border-y border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-white/[0.02]">
             <TableRow>
               {columns.map((col, i) => (
                 <TableCell
                   key={i}
                   isHeader
-                  className="px-6 py-3 text-start text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+                  className="px-6 py-4 text-start text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400"
                 >
                   {col.header}
                 </TableCell>
@@ -48,11 +48,14 @@ export default function PaginatedTable<T>({
 
           <TableBody className="divide-y divide-gray-100 dark:divide-gray-800">
             {data.map((row: T, index) => (
-              <TableRow key={index}>
+              <TableRow
+                key={index}
+                className="group transition-colors hover:bg-gray-50/50 dark:hover:bg-white/[0.02]"
+              >
                 {columns.map((col, i) => (
                   <TableCell
                     key={i}
-                    className="px-6 py-4 text-gray-800 dark:text-white/90"
+                    className="px-6 py-5 text-gray-800 dark:text-white/90"
                   >
                     {col.render(row)}
                   </TableCell>

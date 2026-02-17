@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal } from "../../components/ui/modal";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
@@ -8,17 +8,20 @@ import Button from "../../components/ui/button/Button";
 interface Props {
   isOpen: boolean;
   closeModal: () => void;
+  onAddStadium: (stadium: any) => void;
+  onUpdateStadium: (stadium: any) => void;
+  stadium?: any | null;
 }
 
 import { useData } from "../../context/DataContext";
 
-export default function Create({ isOpen, closeModal }: Props) {
+export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadium, stadium }: Props) {
   const { addActivity, incrementStat } = useData();
   const [form, setForm] = useState({
     name: "",
     address: "",
-    cityId: "",
-    countryId: "",
+    cityId: "1",
+    countryId: "1",
     capacity: "",
     constructionYear: "",
     description: "",
@@ -30,6 +33,36 @@ export default function Create({ isOpen, closeModal }: Props) {
       },
     ],
   });
+
+  useEffect(() => {
+    if (stadium) {
+      setForm({
+        name: stadium.name,
+        address: stadium.address,
+        cityId: cityOptions.find(c => c.label === stadium.city)?.value || "1",
+        countryId: countryOptions.find(c => c.label === stadium.country)?.value || "1",
+        capacity: stadium.capacity.toString(),
+        constructionYear: stadium.constructionYear.toString(),
+        description: stadium.description,
+        zones: stadium.seatingCategories.map((cat: string) => ({
+          name: cat,
+          capacity: "",
+          description: "",
+        })),
+      });
+    } else {
+      setForm({
+        name: "",
+        address: "",
+        cityId: "1",
+        countryId: "1",
+        capacity: "",
+        constructionYear: "",
+        description: "",
+        zones: [{ name: "", capacity: "", description: "" }],
+      });
+    }
+  }, [stadium, isOpen]);
 
   const handleChange = (field: string, value: any) => {
     setForm({ ...form, [field]: value });
@@ -54,37 +87,90 @@ export default function Create({ isOpen, closeModal }: Props) {
   };
 
   const handleSubmit = () => {
-    addActivity("add", `New stadium '${form.name || "Unnamed"}' construction complete`);
-    incrementStat("stadiums");
+    if (!form.name || !form.capacity) return;
+
+    const stadiumData = {
+      id: stadium ? stadium.id : Date.now().toString(),
+      name: form.name,
+      address: form.address,
+      city: cityOptions.find(c => c.value === form.cityId)?.label || "Unknown City",
+      country: countryOptions.find(c => c.value === form.countryId)?.label || "Unknown Country",
+      capacity: parseInt(form.capacity),
+      constructionYear: parseInt(form.constructionYear) || new Date().getFullYear(),
+      description: form.description,
+      status: stadium ? stadium.status : ("Active" as const),
+      seatingCategories: form.zones.filter(z => z.name).map(z => z.name),
+    };
+
+    if (stadium) {
+      onUpdateStadium(stadiumData);
+      addActivity("info", `Stadium '${form.name}' technical details updated`);
+    } else {
+      onAddStadium(stadiumData);
+      addActivity("add", `New stadium '${form.name}' construction complete`);
+      incrementStat("stadiums");
+    }
+
     closeModal();
-    // Reset form
-    setForm({
-      name: "",
-      address: "",
-      cityId: "",
-      countryId: "",
-      capacity: "",
-      constructionYear: "",
-      description: "",
-      zones: [
-        {
-          name: "",
-          capacity: "",
-          description: "",
-        },
-      ],
-    });
   };
 
   const countryOptions = [
-    { value: "1", label: "Morocco" },
-    { value: "2", label: "Spain" },
+    { value: "1", label: "Spain" },
+    { value: "2", label: "Morocco" },
+    { value: "3", label: "United Kingdom" },
+    { value: "4", label: "Germany" },
+    { value: "5", label: "France" },
   ];
 
-  const cityOptions = [
-    { value: "1", label: "Casablanca" },
-    { value: "2", label: "Madrid" },
-  ];
+  const countryToCities: { [key: string]: { value: string; label: string }[] } = {
+    "1": [ // Spain
+      { value: "es-1", label: "Madrid" },
+      { value: "es-2", label: "Barcelona" },
+      { value: "es-3", label: "Valencia" },
+      { value: "es-4", label: "Seville" },
+      { value: "es-5", label: "Bilbao" },
+    ],
+    "2": [ // Morocco
+      { value: "ma-1", label: "Casablanca" },
+      { value: "ma-2", label: "Rabat" },
+      { value: "ma-3", label: "Marrakech" },
+      { value: "ma-4", label: "Tangier" },
+      { value: "ma-5", label: "Agadir" },
+    ],
+    "3": [ // UK
+      { value: "uk-1", label: "London" },
+      { value: "uk-2", label: "Manchester" },
+      { value: "uk-3", label: "Liverpool" },
+      { value: "uk-4", label: "Glasgow" },
+      { value: "uk-5", label: "Birmingham" },
+    ],
+    "4": [ // Germany
+      { value: "de-1", label: "Munich" },
+      { value: "de-2", label: "Berlin" },
+      { value: "de-3", label: "Dortmund" },
+      { value: "de-4", label: "Hamburg" },
+      { value: "de-5", label: "Frankfurt" },
+    ],
+    "5": [ // France
+      { value: "fr-1", label: "Paris" },
+      { value: "fr-2", label: "Marseille" },
+      { value: "fr-3", label: "Lyon" },
+      { value: "fr-4", label: "Lille" },
+      { value: "fr-5", label: "Nice" },
+    ],
+  };
+
+  const cityOptions = countryToCities[form.countryId] || [];
+
+  useEffect(() => {
+    // Reset city if it doesn't belong to the new country
+    if (form.countryId && !stadium) {
+      const cities = countryToCities[form.countryId] || [];
+      if (!cities.find(c => c.value === form.cityId)) {
+        handleChange("cityId", "");
+      }
+    }
+  }, [form.countryId]);
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal} className="w-full max-w-4xl p-0">
@@ -94,10 +180,10 @@ export default function Create({ isOpen, closeModal }: Props) {
           {/* Header */}
           <div>
             <h5 className="text-xl font-semibold text-gray-800 dark:text-white/90">
-              Add Studium
+              {stadium ? "Update Studium" : "Add Studium"}
             </h5>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              Fill the information below to create a new studium.
+              {stadium ? "Modify the venue technical details." : "Fill the information below to create a new studium."}
             </p>
           </div>
 
@@ -126,6 +212,7 @@ export default function Create({ isOpen, closeModal }: Props) {
               <Select
                 options={countryOptions}
                 placeholder="Select country"
+                value={form.countryId}
                 onChange={(value) => handleChange("countryId", value)}
                 className="dark:bg-dark-900"
               />
@@ -136,6 +223,7 @@ export default function Create({ isOpen, closeModal }: Props) {
               <Select
                 options={cityOptions}
                 placeholder="Select city"
+                value={form.cityId}
                 onChange={(value) => handleChange("cityId", value)}
                 className="dark:bg-dark-900"
               />
@@ -227,7 +315,7 @@ export default function Create({ isOpen, closeModal }: Props) {
         {/* Footer */}
         <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
           <Button variant="outline" onClick={closeModal}>Cancel</Button>
-          <Button onClick={handleSubmit}>Add Studium</Button>
+          <Button onClick={handleSubmit}>{stadium ? "Update Studium" : "Add Studium"}</Button>
         </div>
       </div>
     </Modal>

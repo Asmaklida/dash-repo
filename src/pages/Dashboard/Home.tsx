@@ -178,7 +178,7 @@ export default function Home() {
         </div>
 
         {/* Premium Welcome Card */}
-        <div className="group relative overflow-hidden rounded-3xl bg-[#0f172a] p-8 shadow-theme-xl lg:p-12">
+        <div className="group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-theme-xl dark:border-white/5 dark:bg-[#0f172a] lg:p-12">
           {/* Refined Geometric Background */}
           <div className="absolute inset-0 opacity-40">
             <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-brand-500/20 blur-[100px] transition-all group-hover:bg-brand-500/30"></div>
@@ -188,13 +188,13 @@ export default function Home() {
 
           <div className="relative z-10 grid gap-8 lg:grid-cols-2 lg:items-center">
             <div>
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 backdrop-blur-md">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-400">System v2.4 - Season 2026</span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 dark:border-white/10 dark:bg-white/5 backdrop-blur-md">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400">System v2.4 - Season 2026</span>
               </div>
-              <h2 className="mt-6 text-4xl font-black tracking-tight text-white lg:text-5xl">
+              <h2 className="mt-6 text-4xl font-black tracking-tight text-slate-900 dark:text-white lg:text-5xl">
                 Command <span className="text-brand-500">Center.</span>
               </h2>
-              <p className="mt-4 text-lg text-slate-400 lg:max-w-md antialiased font-medium">
+              <p className="mt-4 text-lg text-slate-500 dark:text-slate-400 lg:max-w-md antialiased font-medium">
                 The centralized operational interface for football administration. Monitor live flows and system metrics in real-time.
               </p>
               <div className="mt-10 flex flex-wrap gap-4">
@@ -206,7 +206,7 @@ export default function Home() {
                 </Link>
                 <Link
                   to="/competitions"
-                  className="rounded-xl border border-white/10 bg-white/5 px-8 py-4 text-sm font-bold text-white backdrop-blur-md transition-all hover:bg-white/10 hover:border-white/20"
+                  className="rounded-xl border border-gray-200 bg-gray-50 px-8 py-4 text-sm font-bold text-slate-900 transition-all hover:bg-gray-100 hover:border-gray-300 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:hover:border-white/20"
                 >
                   System Analytics
                 </Link>
