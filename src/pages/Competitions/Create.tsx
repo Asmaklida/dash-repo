@@ -1,53 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal } from "../../components/ui/modal";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import Select from "../../components/form/Select";
 import Button from "../../components/ui/button/Button";
+import { useData } from "../../context/DataContext";
 
 interface Props {
   isOpen: boolean;
   closeModal: () => void;
+  editingItem?: any;
+  onSave: (item: any) => void;
 }
 
-import { useData } from "../../context/DataContext";
-
-export default function Create({ isOpen, closeModal }: Props) {
+export default function Create({ isOpen, closeModal, editingItem, onSave }: Props) {
   const { addActivity, incrementStat } = useData();
   const [form, setForm] = useState({
     name: "",
     abbreviation: "",
-    teamType: "CLUB",
+    type: "CLUB",
     scope: "NATIONAL",
-    countryId: "",
+    country: "",
     continent: "",
     description: "",
   });
+
+  useEffect(() => {
+    if (editingItem) {
+      setForm({
+        name: editingItem.name,
+        abbreviation: editingItem.abbreviation,
+        type: editingItem.type,
+        scope: editingItem.scope,
+        country: editingItem.country,
+        continent: editingItem.continent,
+        description: editingItem.description || "",
+      });
+    } else {
+      setForm({
+        name: "",
+        abbreviation: "",
+        type: "CLUB",
+        scope: "NATIONAL",
+        country: "",
+        continent: "",
+        description: "",
+      });
+    }
+  }, [editingItem, isOpen]);
 
   const handleChange = (field: string, value: any) => {
     setForm({ ...form, [field]: value });
   };
 
   const handleSubmit = () => {
-    addActivity("add", `New competition '${form.name || "Unnamed"}' added to the system`);
-    incrementStat("competitions");
-    closeModal();
-    // Reset form
-    setForm({
-      name: "",
-      abbreviation: "",
-      teamType: "CLUB",
-      scope: "NATIONAL",
-      countryId: "",
-      continent: "",
-      description: "",
-    });
+    onSave(form);
+    addActivity(editingItem ? "info" : "add", `${editingItem ? "Updated" : "Added"} competition '${form.name}'`);
+    if (!editingItem) incrementStat("competitions");
   };
-
-  const countryOptions = [
-    { value: "1", label: "Morocco" },
-    { value: "2", label: "Spain" },
-  ];
 
   const teamTypeOptions = [
     { value: "CLUB", label: "Club" },
@@ -65,7 +75,7 @@ export default function Create({ isOpen, closeModal }: Props) {
       <div className="flex max-h-[90vh] flex-col bg-white dark:bg-gray-900 rounded-2xl">
         <div className="overflow-y-auto px-6 py-6 lg:px-10 space-y-6">
           <h5 className="text-xl font-semibold text-gray-800 dark:text-white/90">
-            Add Competition
+            {editingItem ? "Edit Competition" : "Add Competition"}
           </h5>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -91,8 +101,9 @@ export default function Create({ isOpen, closeModal }: Props) {
               <Label>Team Type</Label>
               <Select
                 options={teamTypeOptions}
+                value={form.type}
                 placeholder="Select team type"
-                onChange={(value) => handleChange("teamType", value)}
+                onChange={(value) => handleChange("type", value)}
                 className="dark:bg-dark-900"
               />
             </div>
@@ -101,6 +112,7 @@ export default function Create({ isOpen, closeModal }: Props) {
               <Label>Scope</Label>
               <Select
                 options={scopeOptions}
+                value={form.scope}
                 placeholder="Select scope"
                 onChange={(value) => handleChange("scope", value)}
                 className="dark:bg-dark-900"
@@ -108,12 +120,11 @@ export default function Create({ isOpen, closeModal }: Props) {
             </div>
 
             <div>
-              <Label>Country</Label>
-              <Select
-                options={countryOptions}
-                placeholder="Select country"
-                onChange={(value) => handleChange("countryId", value)}
-                className="dark:bg-dark-900"
+              <Label>Country / Context</Label>
+              <Input
+                type="text"
+                value={form.country}
+                onChange={(e) => handleChange("country", e.target.value)}
               />
             </div>
 
@@ -142,7 +153,7 @@ export default function Create({ isOpen, closeModal }: Props) {
           <Button variant="outline" onClick={closeModal}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>Add Competition</Button>
+          <Button onClick={handleSubmit}>{editingItem ? "Save Changes" : "Add Competition"}</Button>
         </div>
       </div>
     </Modal>

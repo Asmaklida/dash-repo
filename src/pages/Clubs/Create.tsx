@@ -1,76 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal } from "../../components/ui/modal";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
-import Select from "../../components/form/Select";
 import Button from "../../components/ui/button/Button";
+import { useData } from "../../context/DataContext";
 
 interface Props {
   isOpen: boolean;
   closeModal: () => void;
+  editingItem?: any;
+  onSave: (item: any) => void;
 }
 
-import { useData } from "../../context/DataContext";
-
-export default function Create({ isOpen, closeModal }: Props) {
+export default function Create({ isOpen, closeModal, editingItem, onSave }: Props) {
   const { addActivity, incrementStat } = useData();
   const [form, setForm] = useState({
     name: "",
-    abbreviation: "",
-    teamType: "NATIONAL",
-    scope: "NATIONAL",
-    countryId: "",
+    country: "",
+    city: "",
     continent: "",
+    stadium: "",
     description: "",
   });
+
+  useEffect(() => {
+    if (editingItem) {
+      setForm({
+        name: editingItem.name,
+        country: editingItem.country,
+        city: editingItem.city,
+        continent: editingItem.continent,
+        stadium: editingItem.stadium,
+        description: editingItem.description || "",
+      });
+    } else {
+      setForm({
+        name: "",
+        country: "",
+        city: "",
+        continent: "",
+        stadium: "",
+        description: "",
+      });
+    }
+  }, [editingItem, isOpen]);
 
   const handleChange = (field: string, value: any) => {
     setForm({ ...form, [field]: value });
   };
 
   const handleSubmit = () => {
-    addActivity("add", `New team '${form.name || "Unnamed"}' registered to the league`);
-    incrementStat("teams");
-    closeModal();
-    // Reset form
-    setForm({
-      name: "",
-      abbreviation: "",
-      teamType: "NATIONAL",
-      scope: "NATIONAL",
-      countryId: "",
-      continent: "",
-      description: "",
-    });
+    onSave(form);
+    addActivity(editingItem ? "warning" : "add", `${editingItem ? "Updated" : "Registered"} club '${form.name}'`);
+    if (!editingItem) incrementStat("teams");
   };
-
-  const countryOptions = [
-    { value: "1", label: "Morocco" },
-    { value: "2", label: "Spain" },
-  ];
-
-  const teamTypeOptions = [
-    { value: "NATIONAL", label: "National" },
-    { value: "CLUB", label: "Club" },
-  ];
-
-  const scopeOptions = [
-    { value: "NATIONAL", label: "National" },
-    { value: "CONTINENTAL", label: "Continental" },
-    { value: "GLOBAL", label: "Global" },
-  ];
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal} className="w-full max-w-3xl p-0">
       <div className="flex max-h-[90vh] flex-col bg-white dark:bg-gray-900 rounded-2xl">
         <div className="overflow-y-auto px-6 py-6 lg:px-10 space-y-6">
           <h5 className="text-xl font-semibold text-gray-800 dark:text-white/90">
-            Add Team
+            {editingItem ? "Edit Club" : "Register Club"}
           </h5>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <Label>Name</Label>
+              <Label>Club Name</Label>
               <Input
                 type="text"
                 value={form.name}
@@ -79,41 +74,29 @@ export default function Create({ isOpen, closeModal }: Props) {
             </div>
 
             <div>
-              <Label>Abbreviation</Label>
+              <Label>Stadium Name</Label>
               <Input
                 type="text"
-                value={form.abbreviation}
-                onChange={(e) => handleChange("abbreviation", e.target.value)}
+                value={form.stadium}
+                onChange={(e) => handleChange("stadium", e.target.value)}
               />
             </div>
 
             <div>
-              <Label>Team Type</Label>
-              <Select
-                options={teamTypeOptions}
-                placeholder="Select team type"
-                onChange={(value) => handleChange("teamType", value)}
-                className="dark:bg-dark-900"
-              />
-            </div>
-
-            <div>
-              <Label>Scope</Label>
-              <Select
-                options={scopeOptions}
-                placeholder="Select scope"
-                onChange={(value) => handleChange("scope", value)}
-                className="dark:bg-dark-900"
+              <Label>City</Label>
+              <Input
+                type="text"
+                value={form.city}
+                onChange={(e) => handleChange("city", e.target.value)}
               />
             </div>
 
             <div>
               <Label>Country</Label>
-              <Select
-                options={countryOptions}
-                placeholder="Select country"
-                onChange={(value) => handleChange("countryId", value)}
-                className="dark:bg-dark-900"
+              <Input
+                type="text"
+                value={form.country}
+                onChange={(e) => handleChange("country", e.target.value)}
               />
             </div>
 
@@ -128,7 +111,7 @@ export default function Create({ isOpen, closeModal }: Props) {
           </div>
 
           <div>
-            <Label>Description</Label>
+            <Label>Club History / Bio</Label>
             <textarea
               rows={4}
               value={form.description}
@@ -142,7 +125,7 @@ export default function Create({ isOpen, closeModal }: Props) {
           <Button variant="outline" onClick={closeModal}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>Add Team</Button>
+          <Button onClick={handleSubmit}>{editingItem ? "Update Entry" : "Register Team"}</Button>
         </div>
       </div>
     </Modal>

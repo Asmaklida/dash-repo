@@ -1,65 +1,100 @@
+import { useState, useEffect } from "react";
 import { Modal } from "../../components/ui/modal";
+import Label from "../../components/form/Label";
+import Input from "../../components/form/input/InputField";
+import Select from "../../components/form/Select";
+import Button from "../../components/ui/button/Button";
+import { useData } from "../../context/DataContext";
 
 interface Props {
   isOpen: boolean;
   closeModal: () => void;
+  editingItem?: any;
+  onSave: (item: any) => void;
 }
 
-const Create: React.FC<Props> = ({ isOpen, closeModal }) => {
+const Create: React.FC<Props> = ({ isOpen, closeModal, editingItem, onSave }) => {
+  const { addActivity } = useData();
+  const [form, setForm] = useState({
+    name: "",
+    country: "",
+    continentName: "AFRICA",
+  });
+
+  useEffect(() => {
+    if (editingItem) {
+      setForm({
+        name: editingItem.name,
+        country: editingItem.country,
+        continentName: editingItem.continentName,
+      });
+    } else {
+      setForm({
+        name: "",
+        country: "",
+        continentName: "AFRICA",
+      });
+    }
+  }, [editingItem, isOpen]);
+
+  const handleSubmit = () => {
+    onSave(form);
+    addActivity(editingItem ? "info" : "add", `${editingItem ? "Updated" : "Registered"} city '${form.name}'`);
+  };
+
+  const continentOptions = [
+    { value: "AFRICA", label: "Africa" },
+    { value: "EUROPE", label: "Europe" },
+    { value: "ASIA", label: "Asia" },
+    { value: "NORTH AMERICA", label: "North America" },
+    { value: "SOUTH AMERICA", label: "South America" },
+    { value: "OCEANIA", label: "Oceania" },
+  ];
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={closeModal}
-      className="max-w-[700px] p-6 lg:p-10"
+      className="max-w-[600px] p-0"
     >
-      <div className="flex flex-col px-2 overflow-y-auto custom-scrollbar">
-        <div>
-          <h5 className="mb-2 font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl">
-            Add Studium
+      <div className="flex max-h-[90vh] flex-col bg-white dark:bg-gray-900 rounded-2xl">
+        <div className="overflow-y-auto px-6 py-6 lg:px-10 space-y-6">
+          <h5 className="text-xl font-semibold text-gray-800 dark:text-white/90">
+            {editingItem ? "Edit Metropolitan Hub" : "Register New City"}
           </h5>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Plan your next big moment: schedule or edit an event to stay on
-            track
-          </p>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <Label>City Name</Label>
+              <Input
+                type="text"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+              />
+            </div>
+            <div>
+              <Label>Country</Label>
+              <Input
+                type="text"
+                value={form.country}
+                onChange={(e) => setForm({ ...form, country: e.target.value })}
+              />
+            </div>
+            <div className="md:col-span-2">
+              <Label>Continent</Label>
+              <Select
+                options={continentOptions}
+                value={form.continentName}
+                placeholder="Select continent"
+                onChange={(value) => setForm({ ...form, continentName: value })}
+                className="dark:bg-dark-900"
+              />
+            </div>
+          </div>
         </div>
-        <div className="mt-8">
-          <div className="flex flex-col gap-5">
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                Event Title
-              </label>
-              <input
-                id="event-title"
-                type="text"
-                className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-              />
-            </div>
-            <div>
-              <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                Event Title
-              </label>
-              <input
-                id="event-title"
-                type="text"
-                className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-3 mt-6 modal-footer sm:justify-end">
-            <button
-              onClick={closeModal}
-              type="button"
-              className="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] sm:w-auto"
-            >
-              Close
-            </button>
-            <button
-              type="button"
-              className="btn btn-success btn-update-event flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 sm:w-auto"
-            >
-              Add Studium
-            </button>
-          </div>
+
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
+          <Button variant="outline" onClick={closeModal}>Cancel</Button>
+          <Button onClick={handleSubmit}>{editingItem ? "Update Hub" : "Register City"}</Button>
         </div>
       </div>
     </Modal>

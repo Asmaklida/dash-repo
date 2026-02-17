@@ -1,186 +1,177 @@
 import { useState, useMemo, useEffect } from "react";
-import Button from "../../components/ui/button/Button";
-import Badge from "../../components/ui/badge/Badge";
 import PageMeta from "../../components/common/PageMeta";
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import ComponentCard from "../../components/common/ComponentCard";
 import { useModal } from "../../hooks/useModal";
 import { useLocation } from "react-router";
 import Create from "./Create";
+import { faCity, faMapPin, faBuildingColumns, faCircleDot, faPenToSquare, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-interface CountryData {
+interface CityData {
+  id: string;
   name: string;
-  country: {
-    id: string;
-    name: string;
-    continentName: string;
-    createdAt: string;
-    updatedAt: string;
-    createdBy: string;
-    updatedBy: string;
-    active: boolean;
-  };
+  country: string;
+  continentName: string;
 }
 
-const DATA: CountryData[] = [
-  {
-    name: "Casablanca",
-    country: {
-      id: "1",
-      name: "Morocco",
-      continentName: "AFRICA",
-      createdAt: "2026-02-15T00:43:21.351Z",
-      updatedAt: "2026-02-15T00:43:21.351Z",
-      createdBy: "admin",
-      updatedBy: "admin",
-      active: true,
-    },
-  },
-  {
-    name: "Berlin",
-    country: {
-      id: "2",
-      name: "Germany",
-      continentName: "EUROPE",
-      createdAt: "2026-02-15T01:00:00.000Z",
-      updatedAt: "2026-02-15T01:00:00.000Z",
-      createdBy: "admin",
-      updatedBy: "admin",
-      active: true,
-    },
-  },
-  {
-    name: "Tokyo",
-    country: {
-      id: "3",
-      name: "Japan",
-      continentName: "ASIA",
-      createdAt: "2026-02-15T01:30:00.000Z",
-      updatedAt: "2026-02-15T01:30:00.000Z",
-      createdBy: "admin",
-      updatedBy: "admin",
-      active: false,
-    },
-  },
-  // Add more countries here
-];
-
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 8;
 
 export const Show = () => {
-  const [page, setPage] = useState(1);
-  const totalPages = Math.ceil(DATA.length / ITEMS_PER_PAGE);
   const { isOpen, openModal, closeModal } = useModal();
   const location = useLocation();
+  const [editingItem, setEditingItem] = useState<CityData | null>(null);
+
+  const [cities, setCities] = useState<CityData[]>([
+    {
+      id: "1",
+      name: "Casablanca",
+      country: "Morocco",
+      continentName: "AFRICA",
+    },
+    {
+      id: "2",
+      name: "Berlin",
+      country: "Germany",
+      continentName: "EUROPE",
+    },
+    {
+      id: "3",
+      name: "Tokyo",
+      country: "Japan",
+      continentName: "ASIA",
+    },
+  ]);
 
   useEffect(() => {
     if (location.state?.openModal) {
-      openModal();
+      handleAddNew();
       window.history.replaceState({}, document.title);
     }
   }, [location.state, openModal]);
 
+  const [page] = useState(1);
+
   const paginatedData = useMemo(() => {
     const start = (page - 1) * ITEMS_PER_PAGE;
-    return DATA.slice(start, start + ITEMS_PER_PAGE);
-  }, [page]);
+    return cities.slice(start, start + ITEMS_PER_PAGE);
+  }, [page, cities]);
 
-  const continentColor = (continent: string) => {
-    switch (continent) {
-      case "AFRICA":
-        return "success";
-      case "EUROPE":
-        return "primary";
-      case "ASIA":
-        return "warning";
-      case "NORTH AMERICA":
-        return "info";
-      case "SOUTH AMERICA":
-        return "dark";
-      case "OCEANIA":
-        return "error";
-      default:
-        return "light";
+  const handleAddNew = () => {
+    setEditingItem(null);
+    openModal();
+  };
+
+  const handleEdit = (item: CityData) => {
+    setEditingItem(item);
+    openModal();
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this city record?")) {
+      setCities(prev => prev.filter(c => c.id !== id));
     }
+  };
+
+  const handleSave = (item: any) => {
+    if (editingItem) {
+      setCities(prev => prev.map(c => c.id === editingItem.id ? { ...item, id: c.id } : c));
+    } else {
+      setCities(prev => [...prev, { ...item, id: Math.random().toString(36).substr(2, 9) }]);
+    }
+    closeModal();
   };
 
   return (
     <>
-      <PageMeta title="Cities | chritickets" description="All Cities" />
-      <PageBreadcrumb pageTitle="Cities" />
+      <PageMeta title="Cities | Football Admin" description="Manage metropolitan locations" />
 
-      <div className="space-y-6">
-        <ComponentCard
-          title="All Cities"
-          addButton={{
-            label: "Add City +",
-            onClick: openModal,
-          }}
-        >
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            {paginatedData.map((item) => (
-              <div
-                key={item.country.id}
-                className="flex flex-col items-center justify-center bg-white dark:bg-gray-800 rounded-xl p-4 shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1 cursor-pointer"
-              >
-                <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full mb-3"></div>
+      {/* Premium Command Header */}
+      <div className="mb-10 group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-theme-xl dark:border-white/5 dark:bg-[#0f172a] lg:p-10">
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/20 blur-[80px]"></div>
+          <div className="absolute top-1/2 left-1/4 h-48 w-48 rounded-full bg-cyan-500/10 blur-[60px]"></div>
+        </div>
 
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1 text-center">
-                  {item.country.name}
-                </h3>
-
-                <Badge
-                  variant="solid"
-                  size="sm"
-                  color={continentColor(item.country.continentName)}
-                >
-                  {item.country.continentName}
-                </Badge>
-              </div>
-            ))}
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 dark:border-white/10 dark:bg-white/5 backdrop-blur-md">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">Location Control</span>
+            </div>
+            <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-900 dark:text-white lg:text-4xl">
+              Metropolitan <span className="text-emerald-500">Hubs.</span>
+            </h2>
+            <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-xl antialiased">
+              Manage your network of global cities. Categorize by continent and assign to countries to build your operational map.
+            </p>
           </div>
-
-          {/* Pagination */}
-          <div className="flex justify-center items-center gap-4 mt-6">
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
+          <div className="flex items-center gap-4">
+            <div className="hidden items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 dark:border-emerald-500/10 dark:bg-emerald-500/5 backdrop-blur-sm lg:flex">
+              <FontAwesomeIcon icon={faCircleDot} className="h-1.5 w-1.5 animate-pulse text-emerald-500" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Urban Analytics</span>
+            </div>
+            <button
+              onClick={handleAddNew}
+              className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all hover:bg-emerald-600 hover:scale-105 active:scale-95"
             >
-              ← Previous
-            </Button>
-
-            {Array.from({ length: totalPages }).map((_, i) => {
-              const p = i + 1;
-              const isActive = page === p;
-              return (
-                <button
-                  key={p}
-                  onClick={() => setPage(p)}
-                  className={`h-9 w-9 rounded-lg text-sm font-medium border transition
-                ${isActive
-                      ? "bg-primary text-white border-primary"
-                      : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 dark:bg-transparent dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
-                    }`}
-                >
-                  {p}
-                </button>
-              );
-            })}
-
-            <Button
-              size="sm"
-              variant="outline"
-              disabled={page === totalPages}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              Next →
-            </Button>
+              <FontAwesomeIcon icon={faPlus} className="mr-2" />
+              Register City
+            </button>
           </div>
-        </ComponentCard>
+        </div>
       </div>
-      <Create isOpen={isOpen} closeModal={closeModal} />
+
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+        {paginatedData.map((item) => (
+          <div key={item.id} className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-theme-md transition-all hover:-translate-y-1 hover:shadow-theme-xl dark:border-white/5 dark:bg-gray-dark/80 backdrop-blur-sm">
+            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-emerald-500/5 blur-3xl group-hover:bg-emerald-500/10 transition-colors"></div>
+
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500 shadow-inner group-hover:scale-110 transition-transform">
+                <FontAwesomeIcon icon={faCity} className="h-5 w-5" />
+              </div>
+              <span className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold border backdrop-blur-md ${item.continentName === "AFRICA"
+                ? "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400"
+                : "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400"
+                }`}>
+                {item.continentName}
+              </span>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white group-hover:text-emerald-500 transition-colors">{item.name}</h3>
+              <div className="mt-4 flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500">
+                  <FontAwesomeIcon icon={faMapPin} className="text-[10px]" />
+                  <span className="text-xs font-bold uppercase tracking-widest">{item.country}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500">
+                  <FontAwesomeIcon icon={faBuildingColumns} className="text-[10px]" />
+                  <span className="text-xs font-medium">Metropolitan Admin</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex items-center justify-between border-t border-gray-50 pt-4 dark:border-white/5">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleEdit(item)}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 text-gray-500 transition-all hover:bg-emerald-500 hover:text-white hover:border-emerald-500 dark:border-white/5 dark:bg-white/5"
+                >
+                  <FontAwesomeIcon icon={faPenToSquare} className="text-[10px]" />
+                </button>
+                <button
+                  onClick={() => handleDelete(item.id)}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 text-gray-500 transition-all hover:bg-rose-500 hover:text-white hover:border-rose-500 dark:border-white/5 dark:bg-white/5"
+                >
+                  <FontAwesomeIcon icon={faTrashCan} className="text-[10px]" />
+                </button>
+              </div>
+              <button className="text-[10px] font-black uppercase tracking-widest text-emerald-600 hover:text-emerald-700 dark:text-emerald-400">View Map</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <Create isOpen={isOpen} closeModal={closeModal} editingItem={editingItem} onSave={handleSave} />
     </>
   );
 };

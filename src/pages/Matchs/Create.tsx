@@ -5,10 +5,13 @@ import Input from "../../components/form/input/InputField";
 import Select from "../../components/form/Select";
 import Button from "../../components/ui/button/Button";
 import DatePicker from "../../components/form/date-picker";
+import { useData } from "../../context/DataContext";
 
 interface Props {
   isOpen: boolean;
   closeModal: () => void;
+  editingItem?: any;
+  onSave: (item: any) => void;
 }
 
 interface Zone {
@@ -22,20 +25,18 @@ interface Stadium {
   zones: Zone[];
 }
 
-import { useData } from "../../context/DataContext";
-
-export default function Create({ isOpen, closeModal }: Props) {
+export default function Create({ isOpen, closeModal, editingItem, onSave }: Props) {
   const { addActivity, incrementStat } = useData();
   const [form, setForm] = useState({
     dateTime: "",
-    status: "",
+    status: "SCHEDULED",
     matchNumber: "",
     attendance: 0,
     referee: "",
-    stadiumId: "",
-    homeTeamId: "",
-    awayTeamId: "",
-    competitionId: "",
+    stadiumName: "",
+    homeTeam: "",
+    awayTeam: "",
+    competition: "",
     zonePricings: [] as { zoneId: string; price: number; availableSeats: number; isActive: boolean }[],
   });
 
@@ -45,18 +46,50 @@ export default function Create({ isOpen, closeModal }: Props) {
   // Fetch stadiums (fake for now)
   useEffect(() => {
     setStadiums([
-      { id: "s1", name: "Stadium A", zones: [{ id: "z1", name: "VIP" }, { id: "z2", name: "Regular" }] },
-      { id: "s2", name: "Stadium B", zones: [{ id: "z3", name: "Premium" }, { id: "z4", name: "Standard" }] },
+      { id: "s1", name: "Wembley Stadium", zones: [{ id: "z1", name: "VIP" }, { id: "z2", name: "Regular" }] },
+      { id: "s2", name: "Camp Nou", zones: [{ id: "z3", name: "Premium" }, { id: "z4", name: "Standard" }] },
     ]);
   }, []);
 
-  // When stadium changes, load its zones into pricing
+  useEffect(() => {
+    if (editingItem) {
+      setForm({
+        dateTime: editingItem.dateTime,
+        status: editingItem.status,
+        matchNumber: editingItem.matchNumber,
+        attendance: editingItem.attendance,
+        referee: editingItem.referee,
+        stadiumName: editingItem.stadiumName,
+        homeTeam: editingItem.homeTeam,
+        awayTeam: editingItem.awayTeam,
+        competition: editingItem.competition,
+        zonePricings: editingItem.zonePricings || [],
+      });
+      const stadium = stadiums.find(s => s.name === editingItem.stadiumName);
+      setZones(stadium?.zones || []);
+    } else {
+      setForm({
+        dateTime: "",
+        status: "SCHEDULED",
+        matchNumber: "",
+        attendance: 0,
+        referee: "",
+        stadiumName: "",
+        homeTeam: "",
+        awayTeam: "",
+        competition: "",
+        zonePricings: [],
+      });
+      setZones([]);
+    }
+  }, [editingItem, isOpen, stadiums]);
+
   const handleStadiumChange = (stadiumId: string) => {
     const stadium = stadiums.find((s) => s.id === stadiumId);
     setZones(stadium?.zones || []);
     setForm({
       ...form,
-      stadiumId,
+      stadiumName: stadium?.name || "",
       zonePricings: stadium?.zones.map((z) => ({ zoneId: z.id, price: 0, availableSeats: 0, isActive: true })) || [],
     });
   };
@@ -67,35 +100,25 @@ export default function Create({ isOpen, closeModal }: Props) {
   };
 
   const handleSubmit = () => {
-    addActivity("success", `New match scheduled between team #${form.homeTeamId} and #${form.awayTeamId}`);
-    incrementStat("matches");
-    closeModal();
-    // Reset form
-    setForm({
-      dateTime: "",
-      status: "",
-      matchNumber: "",
-      attendance: 0,
-      referee: "",
-      stadiumId: "",
-      homeTeamId: "",
-      awayTeamId: "",
-      competitionId: "",
-      zonePricings: [],
-    });
+    onSave(form);
+    addActivity(editingItem ? "info" : "add", `${editingItem ? "Updated" : "Scheduled"} match between ${form.homeTeam} and ${form.awayTeam}`);
+    if (!editingItem) incrementStat("matches");
   };
 
   const statusOptions = [
-    { value: "Scheduled", label: "Scheduled" },
-    { value: "Completed", label: "Completed" },
-    { value: "Canceled", label: "Canceled" },
+    { value: "SCHEDULED", label: "Scheduled" },
+    { value: "LIVE", label: "Live" },
+    { value: "COMPLETED", label: "Completed" },
+    { value: "CANCELED", label: "Canceled" },
   ];
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal} className="w-full max-w-4xl p-0">
       <div className="flex max-h-[90vh] flex-col bg-white dark:bg-gray-900 rounded-2xl">
         <div className="overflow-y-auto px-6 py-6 lg:px-10 space-y-6">
-          <h5 className="text-xl font-semibold text-gray-800 dark:text-white/90">Add Match</h5>
+          <h5 className="text-xl font-semibold text-gray-800 dark:text-white/90">
+            {editingItem ? "Edit Match Fixture" : "Schedule New Match"}
+          </h5>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
@@ -103,6 +126,7 @@ export default function Create({ isOpen, closeModal }: Props) {
               <DatePicker
                 id="dateTime"
                 placeholder="Select Date & Time"
+                value={form.dateTime}
                 onChange={(_, dateString) => setForm({ ...form, dateTime: dateString })}
               />
             </div>
@@ -111,6 +135,7 @@ export default function Create({ isOpen, closeModal }: Props) {
               <Label>Status</Label>
               <Select
                 options={statusOptions}
+                value={form.status}
                 placeholder="Select Status"
                 onChange={(value) => setForm({ ...form, status: value })}
                 className="dark:bg-dark-900"
@@ -123,11 +148,6 @@ export default function Create({ isOpen, closeModal }: Props) {
             </div>
 
             <div>
-              <Label>Attendance</Label>
-              <Input type="number" value={form.attendance} onChange={(e) => setForm({ ...form, attendance: Number(e.target.value) })} />
-            </div>
-
-            <div>
               <Label>Referee</Label>
               <Input type="text" value={form.referee} onChange={(e) => setForm({ ...form, referee: e.target.value })} />
             </div>
@@ -136,6 +156,7 @@ export default function Create({ isOpen, closeModal }: Props) {
               <Label>Stadium</Label>
               <Select
                 options={stadiums.map((s) => ({ value: s.id, label: s.name }))}
+                value={stadiums.find(s => s.name === form.stadiumName)?.id || ""}
                 placeholder="Select Stadium"
                 onChange={handleStadiumChange}
                 className="dark:bg-dark-900"
@@ -143,35 +164,35 @@ export default function Create({ isOpen, closeModal }: Props) {
             </div>
 
             <div>
+              <Label>Competition</Label>
+              <Input type="text" value={form.competition} onChange={(e) => setForm({ ...form, competition: e.target.value })} />
+            </div>
+
+            <div>
               <Label>Home Team</Label>
-              <Input type="text" value={form.homeTeamId} onChange={(e) => setForm({ ...form, homeTeamId: e.target.value })} />
+              <Input type="text" value={form.homeTeam} onChange={(e) => setForm({ ...form, homeTeam: e.target.value })} />
             </div>
 
             <div>
               <Label>Away Team</Label>
-              <Input type="text" value={form.awayTeamId} onChange={(e) => setForm({ ...form, awayTeamId: e.target.value })} />
-            </div>
-
-            <div>
-              <Label>Competition</Label>
-              <Input type="text" value={form.competitionId} onChange={(e) => setForm({ ...form, competitionId: e.target.value })} />
+              <Input type="text" value={form.awayTeam} onChange={(e) => setForm({ ...form, awayTeam: e.target.value })} />
             </div>
           </div>
 
           {/* Zone Pricing */}
           {zones.length > 0 && (
             <div className="space-y-4 mt-4">
-              <h6 className="font-semibold text-gray-800 dark:text-white/90">Zone Pricing</h6>
+              <h6 className="font-semibold text-gray-800 dark:text-white/90">Zone Pricing & Allocation</h6>
               {form.zonePricings.map((z) => {
                 const zone = zones.find((zone) => zone.id === z.zoneId);
                 return (
                   <div key={z.zoneId} className="grid grid-cols-1 gap-4 md:grid-cols-3 p-4 border border-gray-200 rounded-xl dark:border-gray-700">
                     <div>
-                      <Label>Zone Name</Label>
+                      <Label>Zone</Label>
                       <Input type="text" value={zone?.name || ""} disabled />
                     </div>
                     <div>
-                      <Label>Price</Label>
+                      <Label>Price ($)</Label>
                       <Input type="number" value={z.price} onChange={(e) => handleZonePriceChange(z.zoneId, "price", Number(e.target.value))} />
                     </div>
                     <div>
@@ -187,7 +208,7 @@ export default function Create({ isOpen, closeModal }: Props) {
 
         <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
           <Button variant="outline" onClick={closeModal}>Cancel</Button>
-          <Button onClick={handleSubmit}>Add Match</Button>
+          <Button onClick={handleSubmit}>{editingItem ? "Update Fixture" : "Schedule Match"}</Button>
         </div>
       </div>
     </Modal>

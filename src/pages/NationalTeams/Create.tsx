@@ -1,40 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal } from "../../components/ui/modal";
 import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import Select from "../../components/form/Select";
 import Button from "../../components/ui/button/Button";
+import { useData } from "../../context/DataContext";
 
 interface Props {
   isOpen: boolean;
   closeModal: () => void;
+  editingItem?: any;
+  onSave: (item: any) => void;
 }
 
-export default function Create({ isOpen, closeModal }: Props) {
+export default function Create({ isOpen, closeModal, editingItem, onSave }: Props) {
+  const { addActivity } = useData();
   const [form, setForm] = useState({
     name: "",
     abbreviation: "",
     teamType: "NATIONAL",
     scope: "NATIONAL",
-    countryId: "",
+    country: "",
     continent: "",
     description: "",
   });
+
+  useEffect(() => {
+    if (editingItem) {
+      setForm({
+        name: editingItem.name,
+        abbreviation: editingItem.abbreviation,
+        teamType: editingItem.teamType,
+        scope: editingItem.scope,
+        country: editingItem.country,
+        continent: editingItem.continent,
+        description: editingItem.description || "",
+      });
+    } else {
+      setForm({
+        name: "",
+        abbreviation: "",
+        teamType: "NATIONAL",
+        scope: "NATIONAL",
+        country: "",
+        continent: "",
+        description: "",
+      });
+    }
+  }, [editingItem, isOpen]);
 
   const handleChange = (field: string, value: any) => {
     setForm({ ...form, [field]: value });
   };
 
   const handleSubmit = () => {
-    console.log("Submitting National Team:", form);
-    closeModal();
+    onSave(form);
+    addActivity(editingItem ? "info" : "add", `${editingItem ? "Updated" : "Enlisted"} national squad '${form.name}'`);
   };
-
-  const countryOptions = [
-    { value: "1", label: "Morocco" },
-    { value: "2", label: "Spain" },
-    { value: "3", label: "France" },
-  ];
 
   const teamTypeOptions = [
     { value: "NATIONAL", label: "National" },
@@ -52,11 +74,11 @@ export default function Create({ isOpen, closeModal }: Props) {
       <div className="flex max-h-[90vh] flex-col bg-white dark:bg-gray-900 rounded-2xl">
         <div className="overflow-y-auto px-6 py-6 lg:px-10 space-y-6">
           <h5 className="text-xl font-semibold text-gray-800 dark:text-white/90">
-            Add National Team
+            {editingItem ? "Edit Squad Intelligence" : "Enlist National Team"}
           </h5>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <Label>Name</Label>
+              <Label>Squad Name</Label>
               <Input
                 type="text"
                 value={form.name}
@@ -64,7 +86,7 @@ export default function Create({ isOpen, closeModal }: Props) {
               />
             </div>
             <div>
-              <Label>Abbreviation</Label>
+              <Label>Abbreviation (FIFA)</Label>
               <Input
                 type="text"
                 value={form.abbreviation}
@@ -75,6 +97,7 @@ export default function Create({ isOpen, closeModal }: Props) {
               <Label>Team Type</Label>
               <Select
                 options={teamTypeOptions}
+                value={form.teamType}
                 placeholder="Select team type"
                 onChange={(value) => handleChange("teamType", value)}
                 className="dark:bg-dark-900"
@@ -84,6 +107,7 @@ export default function Create({ isOpen, closeModal }: Props) {
               <Label>Scope</Label>
               <Select
                 options={scopeOptions}
+                value={form.scope}
                 placeholder="Select scope"
                 onChange={(value) => handleChange("scope", value)}
                 className="dark:bg-dark-900"
@@ -91,15 +115,14 @@ export default function Create({ isOpen, closeModal }: Props) {
             </div>
             <div>
               <Label>Country</Label>
-              <Select
-                options={countryOptions}
-                placeholder="Select country"
-                onChange={(value) => handleChange("countryId", value)}
-                className="dark:bg-dark-900"
+              <Input
+                type="text"
+                value={form.country}
+                onChange={(e) => handleChange("country", e.target.value)}
               />
             </div>
             <div>
-              <Label>Continent</Label>
+              <Label>Confederation / Continent</Label>
               <Input
                 type="text"
                 value={form.continent}
@@ -109,7 +132,7 @@ export default function Create({ isOpen, closeModal }: Props) {
           </div>
 
           <div>
-            <Label>Description</Label>
+            <Label>Squad Description / History</Label>
             <textarea
               rows={4}
               value={form.description}
@@ -123,7 +146,7 @@ export default function Create({ isOpen, closeModal }: Props) {
           <Button variant="outline" onClick={closeModal}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>Add Team</Button>
+          <Button onClick={handleSubmit}>{editingItem ? "Update Squad" : "Enlist Squad"}</Button>
         </div>
       </div>
     </Modal>

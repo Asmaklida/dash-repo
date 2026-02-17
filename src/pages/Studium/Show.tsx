@@ -4,7 +4,7 @@ import PaginatedTable from "../../components/tables/PaginatedTable";
 import Create from "./Create";
 import { useModal } from "../../hooks/useModal";
 import { useLocation } from "react-router";
-import { faBuilding, faUsersRectangle, faCity, faCircleDot, faSearch, faFilter, faPencilAlt, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faBuilding, faUsersRectangle, faCity, faCircleDot, faSearch, faFilter, faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface Studium {
@@ -188,18 +188,18 @@ export default function Show() {
     {
       header: "ACTIONS",
       render: (row: Studium) => (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => handleEdit(row)}
-            className="text-gray-400 hover:text-brand-500 transition-colors"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 text-gray-500 transition-all hover:bg-emerald-500 hover:text-white hover:border-emerald-500 dark:border-white/5 dark:bg-white/5"
           >
-            <FontAwesomeIcon icon={faPencilAlt} className="text-xs" />
+            <FontAwesomeIcon icon={faPenToSquare} className="text-[10px]" />
           </button>
           <button
             onClick={() => handleDelete(row.id)}
-            className="text-gray-400 hover:text-error-500 transition-colors"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 text-gray-500 transition-all hover:bg-rose-500 hover:text-white hover:border-rose-500 dark:border-white/5 dark:bg-white/5"
           >
-            <FontAwesomeIcon icon={faTrash} className="text-xs" />
+            <FontAwesomeIcon icon={faTrashCan} className="text-[10px]" />
           </button>
         </div>
       )

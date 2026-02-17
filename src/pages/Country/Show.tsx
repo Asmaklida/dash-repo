@@ -1,146 +1,171 @@
 import { useMemo, useState, useEffect } from "react";
-import Badge from "../../components/ui/badge/Badge";
-import Button from "../../components/ui/button/Button";
 import PageMeta from "../../components/common/PageMeta";
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import ComponentCard from "../../components/common/ComponentCard";
 import { useModal } from "../../hooks/useModal";
 import { useLocation } from "react-router";
 import Create from "./Create";
+import { faFlag, faGlobe, faCircleDot, faEarthAmericas, faEarthAfrica, faEarthEurope, faPenToSquare, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface Country {
-  id: number;
+  id: string;
   name: string;
   continentName: string;
 }
 
-const DATA: Country[] = [
-  { id: 1, name: "Morocco", continentName: "AFRICA" },
-  { id: 2, name: "Germany", continentName: "EUROPE" },
-  { id: 3, name: "Brazil", continentName: "SOUTH AMERICA" },
-  { id: 4, name: "Japan", continentName: "ASIA" },
-  { id: 5, name: "Canada", continentName: "NORTH AMERICA" },
-  { id: 6, name: "Australia", continentName: "OCEANIA" },
-  { id: 7, name: "Egypt", continentName: "AFRICA" },
-];
-
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 8;
 
 function Show() {
-  const [page, setPage] = useState(1);
-  const totalPages = Math.ceil(DATA.length / ITEMS_PER_PAGE);
   const { isOpen, openModal, closeModal } = useModal();
   const location = useLocation();
+  const [editingItem, setEditingItem] = useState<Country | null>(null);
+
+  const [countries, setCountries] = useState<Country[]>([
+    { id: "1", name: "Morocco", continentName: "AFRICA" },
+    { id: "2", name: "Germany", continentName: "EUROPE" },
+    { id: "3", name: "Brazil", continentName: "SOUTH AMERICA" },
+    { id: "4", name: "Japan", continentName: "ASIA" },
+    { id: "5", name: "Canada", continentName: "NORTH AMERICA" },
+    { id: "6", name: "Australia", continentName: "OCEANIA" },
+    { id: "7", name: "Egypt", continentName: "AFRICA" },
+  ]);
 
   useEffect(() => {
     if (location.state?.openModal) {
-      openModal();
+      handleAddNew();
       window.history.replaceState({}, document.title);
     }
   }, [location.state, openModal]);
 
+  const [page] = useState(1);
+
   const paginatedData = useMemo(() => {
     const start = (page - 1) * ITEMS_PER_PAGE;
-    return DATA.slice(start, start + ITEMS_PER_PAGE);
-  }, [page]);
+    return countries.slice(start, start + ITEMS_PER_PAGE);
+  }, [page, countries]);
 
-  const continentColor = (continent: string) => {
+  const handleAddNew = () => {
+    setEditingItem(null);
+    openModal();
+  };
+
+  const handleEdit = (item: Country) => {
+    setEditingItem(item);
+    openModal();
+  };
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this country record?")) {
+      setCountries(prev => prev.filter(c => c.id !== id));
+    }
+  };
+
+  const handleSave = (item: any) => {
+    if (editingItem) {
+      setCountries(prev => prev.map(c => c.id === editingItem.id ? { ...item, id: c.id } : c));
+    } else {
+      setCountries(prev => [...prev, { ...item, id: Math.random().toString(36).substr(2, 9) }]);
+    }
+    closeModal();
+  };
+
+  const getContinentIcon = (continent: string) => {
     switch (continent) {
-      case "AFRICA":
-        return "success";
-      case "EUROPE":
-        return "primary";
-      case "ASIA":
-        return "warning";
-      case "NORTH AMERICA":
-        return "info";
+      case "AFRICA": return faEarthAfrica;
+      case "EUROPE": return faEarthEurope;
       case "SOUTH AMERICA":
-        return "dark";
-      case "OCEANIA":
-        return "error";
-      default:
-        return "light";
+      case "NORTH AMERICA": return faEarthAmericas;
+      default: return faGlobe;
     }
   };
 
   return (
     <>
-      <PageMeta title="Country | chritickets" description="All Country" />
-      <PageBreadcrumb pageTitle="Country" />
+      <PageMeta title="Countries | Football Admin" description="Manage global nations" />
 
-      <div className="space-y-6">
-        <ComponentCard
-          title="All Countries"
-          addButton={{
-            label: "Add Country +",
-            onClick: openModal,
-          }}
-        >
-          <div className="p-6">
-            <div className="grid grid-cols-5 gap-6">
-              {paginatedData.map((country) => (
-                <div
-                  key={country.id}
-                  className="rounded-xl p-6 shadow-md hover:shadow-xl transition-transform transform hover:-translate-y-1
-        bg-gradient-to-br from-white dark:from-gray-800 to-gray-50 dark:to-gray-900 border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center text-center"
-                >
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
-                    {country.name}
-                  </h3>
-                  <Badge
-                    variant="solid"
-                    size="sm"
-                    color={continentColor(country.continentName)}
-                  >
-                    {country.continentName}
-                  </Badge>
-                </div>
-              ))}
+      {/* Premium Command Header */}
+      <div className="mb-10 group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-theme-xl dark:border-white/5 dark:bg-[#0f172a] lg:p-10">
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-500/20 blur-[80px]"></div>
+          <div className="absolute top-1/2 left-1/4 h-48 w-48 rounded-full bg-indigo-500/10 blur-[60px]"></div>
+        </div>
+
+        <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 dark:border-white/10 dark:bg-white/5 backdrop-blur-md">
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">Global Territory</span>
             </div>
-
-            {/* Pagination */}
-            <div className="flex justify-center items-center gap-4 mt-8">
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={page === 1}
-                onClick={() => setPage((p) => p - 1)}
-              >
-                ← Previous
-              </Button>
-
-              {Array.from({ length: totalPages }).map((_, i) => {
-                const p = i + 1;
-                const isActive = page === p;
-                return (
-                  <button
-                    key={p}
-                    onClick={() => setPage(p)}
-                    className={`h-9 w-9 rounded-lg text-sm font-medium border transition
-                ${isActive
-                        ? "bg-primary text-white border-primary"
-                        : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100 dark:bg-transparent dark:text-gray-300 dark:border-gray-700 dark:hover:bg-gray-800"
-                      }`}
-                  >
-                    {p}
-                  </button>
-                );
-              })}
-
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={page === totalPages}
-                onClick={() => setPage((p) => p + 1)}
-              >
-                Next →
-              </Button>
-            </div>
+            <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-900 dark:text-white lg:text-4xl">
+              National <span className="text-blue-500">Entities.</span>
+            </h2>
+            <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-xl antialiased">
+              Manage your network of global nations. Categorize by continent and track international operational territories.
+            </p>
           </div>
-        </ComponentCard>
+          <div className="flex items-center gap-4">
+            <div className="hidden items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1.5 dark:border-blue-500/10 dark:bg-blue-500/5 backdrop-blur-sm lg:flex">
+              <FontAwesomeIcon icon={faCircleDot} className="h-1.5 w-1.5 animate-pulse text-blue-500" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">Territory Control</span>
+            </div>
+            <button
+              onClick={handleAddNew}
+              className="rounded-xl bg-blue-500 px-6 py-3 text-sm font-bold text-white shadow-[0_0_20px_rgba(59,130,246,0.3)] transition-all hover:bg-blue-600 hover:scale-105 active:scale-95"
+            >
+              <FontAwesomeIcon icon={faPlus} className="mr-2" />
+              Enlist Country
+            </button>
+          </div>
+        </div>
       </div>
 
-      <Create isOpen={isOpen} closeModal={closeModal} />
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+        {paginatedData.map((country) => (
+          <div key={country.id} className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-theme-md transition-all hover:-translate-y-1 hover:shadow-theme-xl dark:border-white/5 dark:bg-gray-dark/80 backdrop-blur-sm">
+            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-blue-500/5 blur-3xl group-hover:bg-blue-500/10 transition-colors"></div>
+
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-500 shadow-inner group-hover:scale-110 transition-transform">
+                <FontAwesomeIcon icon={faFlag} className="h-5 w-5" />
+              </div>
+              <span className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold border backdrop-blur-md ${country.continentName === "AFRICA"
+                ? "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400"
+                : "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400"
+                }`}>
+                {country.continentName}
+              </span>
+            </div>
+
+            <div>
+              <h3 className="text-xl font-black text-gray-900 dark:text-white group-hover:text-blue-500 transition-colors">{country.name}</h3>
+              <div className="mt-4 flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-gray-400 dark:text-gray-500">
+                  <FontAwesomeIcon icon={getContinentIcon(country.continentName)} className="text-[10px]" />
+                  <span className="text-xs font-bold uppercase tracking-widest">{country.continentName}</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-8 flex items-center justify-between border-t border-gray-50 pt-4 dark:border-white/5">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleEdit(country)}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 text-gray-500 transition-all hover:bg-blue-500 hover:text-white hover:border-blue-500 dark:border-white/5 dark:bg-white/5"
+                >
+                  <FontAwesomeIcon icon={faPenToSquare} className="text-[10px]" />
+                </button>
+                <button
+                  onClick={() => handleDelete(country.id)}
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 text-gray-500 transition-all hover:bg-rose-500 hover:text-white hover:border-rose-500 dark:border-white/5 dark:bg-white/5"
+                >
+                  <FontAwesomeIcon icon={faTrashCan} className="text-[10px]" />
+                </button>
+              </div>
+              <button className="text-[10px] font-black uppercase tracking-widest text-blue-600 hover:text-blue-700 dark:text-blue-400">View Details</button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <Create isOpen={isOpen} closeModal={closeModal} editingItem={editingItem} onSave={handleSave} />
     </>
   );
 }
