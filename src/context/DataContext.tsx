@@ -16,10 +16,19 @@ export interface AppStats {
     countries: number;
 }
 
+export interface ToastItem {
+    id: string;
+    type: ActivityItem["type"];
+    message: string;
+}
+
 interface DataContextType {
     stats: AppStats;
     activities: ActivityItem[];
+    toasts: ToastItem[];
     addActivity: (type: ActivityItem["type"], message: string) => void;
+    showToast: (type: ActivityItem["type"], message: string) => void;
+    removeToast: (id: string) => void;
     incrementStat: (key: keyof AppStats) => void;
 }
 
@@ -71,6 +80,8 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         return INITIAL_ACTIVITIES;
     });
 
+    const [toasts, setToasts] = useState<ToastItem[]>([]);
+
     useEffect(() => {
         localStorage.setItem("app_stats", JSON.stringify(stats));
     }, [stats]);
@@ -87,6 +98,16 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             timestamp: new Date(),
         };
         setActivities((prev) => [newItem, ...prev.slice(0, 19)]); // Keep last 20
+        showToast(type, message);
+    };
+
+    const showToast = (type: ActivityItem["type"], message: string) => {
+        const id = Math.random().toString(36).substr(2, 9);
+        setToasts((prev) => [...prev, { id, type, message }]);
+    };
+
+    const removeToast = (id: string) => {
+        setToasts((prev) => prev.filter((t) => t.id !== id));
     };
 
     const incrementStat = (key: keyof AppStats) => {
@@ -97,7 +118,15 @@ export const DataProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
 
     return (
-        <DataContext.Provider value={{ stats, activities, addActivity, incrementStat }}>
+        <DataContext.Provider value={{
+            stats,
+            activities,
+            toasts,
+            addActivity,
+            showToast,
+            removeToast,
+            incrementStat
+        }}>
             {children}
         </DataContext.Provider>
     );

@@ -4,8 +4,10 @@ import PaginatedTable from "../../components/tables/PaginatedTable";
 import { useModal } from "../../hooks/useModal";
 import { useLocation } from "react-router";
 import Create from "./Create";
+import { useData } from "../../context/DataContext";
 import { faCalendarDays, faClock, faCirclePlay, faCircleDot, faLocationDot, faPenToSquare, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal";
 
 interface ZonePricing {
   zoneName: string;
@@ -29,7 +31,9 @@ interface Match {
 
 export default function ShowMatches() {
   const { isOpen, openModal, closeModal } = useModal();
+  const { addActivity } = useData();
   const location = useLocation();
+  const [deleteTarget, setDeleteTarget] = useState<Match | null>(null);
   const [editingItem, setEditingItem] = useState<Match | null>(null);
 
   const [matches, setMatches] = useState<Match[]>([
@@ -82,9 +86,15 @@ export default function ShowMatches() {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this match fixture?")) {
-      setMatches(prev => prev.filter(m => m.id !== id));
-    }
+    const match = matches.find(m => m.id === id);
+    if (match) setDeleteTarget(match);
+  };
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    setMatches(prev => prev.filter(m => m.id !== deleteTarget.id));
+    addActivity("warning", `Fixture ${deleteTarget.matchNumber} cancelled`);
+    setDeleteTarget(null);
   };
 
   const handleSave = (item: any) => {
@@ -286,6 +296,13 @@ export default function ShowMatches() {
       </div>
 
       <Create isOpen={isOpen} closeModal={closeModal} editingItem={editingItem} onSave={handleSave} />
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        itemName={`${deleteTarget?.homeTeam ?? ""} vs ${deleteTarget?.awayTeam ?? ""}`}
+        itemType="match fixture"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </>
   );
 }

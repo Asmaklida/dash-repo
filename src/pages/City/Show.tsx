@@ -3,6 +3,9 @@ import PageMeta from "../../components/common/PageMeta";
 import { useModal } from "../../hooks/useModal";
 import { useLocation } from "react-router";
 import Create from "./Create";
+import { useData } from "../../context/DataContext";
+import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal";
+
 import { faCity, faMapPin, faBuildingColumns, faCircleDot, faPenToSquare, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -17,7 +20,9 @@ const ITEMS_PER_PAGE = 8;
 
 export const Show = () => {
   const { isOpen, openModal, closeModal } = useModal();
+  const { addActivity } = useData();
   const location = useLocation();
+  const [deleteTarget, setDeleteTarget] = useState<CityData | null>(null);
   const [editingItem, setEditingItem] = useState<CityData | null>(null);
 
   const [cities, setCities] = useState<CityData[]>([
@@ -66,10 +71,17 @@ export const Show = () => {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this city record?")) {
-      setCities(prev => prev.filter(c => c.id !== id));
-    }
+    const city = cities.find(c => c.id === id);
+    if (city) setDeleteTarget(city);
   };
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    setCities(prev => prev.filter(c => c.id !== deleteTarget.id));
+    addActivity("warning", `City '${deleteTarget.name}' removed from registry`);
+    setDeleteTarget(null);
+  };
+
 
   const handleSave = (item: any) => {
     if (editingItem) {
@@ -172,6 +184,13 @@ export const Show = () => {
       </div>
 
       <Create isOpen={isOpen} closeModal={closeModal} editingItem={editingItem} onSave={handleSave} />
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        itemName={deleteTarget?.name ?? ""}
+        itemType="city"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </>
   );
 };

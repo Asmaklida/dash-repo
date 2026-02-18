@@ -3,9 +3,12 @@ import { Outlet } from "react-router";
 import AppHeader from "./AppHeader";
 import Backdrop from "./Backdrop";
 import AppSidebar from "./AppSidebar";
+import { useData } from "../context/DataContext";
+import Toast from "../components/ui/Toast";
 
 const LayoutContent: React.FC = () => {
   const { isExpanded, isMobileOpen } = useSidebar();
+  const { toasts, removeToast } = useData();
 
   return (
     <div className="min-h-screen xl:flex">
@@ -21,6 +24,19 @@ const LayoutContent: React.FC = () => {
         <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
           <Outlet />
         </div>
+      </div>
+
+      {/* Toast Container */}
+      <div className="fixed top-6 right-6 z-[9999] flex flex-col gap-4 pointer-events-none">
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            id={toast.id}
+            type={toast.type}
+            message={toast.message}
+            onRemove={removeToast}
+          />
+        ))}
       </div>
     </div>
   );

@@ -4,12 +4,15 @@ import PaginatedTable from "../../components/tables/PaginatedTable";
 import { useModal } from "../../hooks/useModal";
 import { useLocation } from "react-router";
 import Create from "./Create";
+import { useData } from "../../context/DataContext";
 import { faTrophy, faCheckCircle, faClock, faCircleDot, faEarthEurope, faPenToSquare, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal";
 
 interface Competition {
   id: string;
   name: string;
+  image?: string;
   abbreviation: string;
   teamType: string;
   scope: string;
@@ -19,7 +22,9 @@ interface Competition {
 
 export default function Show() {
   const { isOpen, openModal, closeModal } = useModal();
+  const { addActivity } = useData();
   const location = useLocation();
+  const [deleteTarget, setDeleteTarget] = useState<Competition | null>(null);
   const [editingItem, setEditingItem] = useState<Competition | null>(null);
 
   const [competitions, setCompetitions] = useState<Competition[]>([
@@ -79,9 +84,15 @@ export default function Show() {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this competition?")) {
-      setCompetitions(prev => prev.filter(c => c.id !== id));
-    }
+    const competition = competitions.find(c => c.id === id);
+    if (competition) setDeleteTarget(competition);
+  };
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    setCompetitions(prev => prev.filter(c => c.id !== deleteTarget.id));
+    addActivity("warning", `Competition '${deleteTarget.name}' removed from database`);
+    setDeleteTarget(null);
   };
 
   const handleSave = (item: any) => {
@@ -98,8 +109,12 @@ export default function Show() {
       header: "COMPETITION",
       render: (row: Competition) => (
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/5">
-            <FontAwesomeIcon icon={faTrophy} className="text-amber-500 text-sm" />
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/5 overflow-hidden">
+            {row.image ? (
+              <img src={row.image} alt={row.name} className="h-full w-full object-cover" />
+            ) : (
+              <FontAwesomeIcon icon={faTrophy} className="text-amber-500 text-sm" />
+            )}
           </div>
           <div>
             <p className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{row.name}</p>
@@ -265,6 +280,13 @@ export default function Show() {
       </div>
 
       <Create isOpen={isOpen} closeModal={closeModal} editingItem={editingItem} onSave={handleSave} />
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        itemName={deleteTarget?.name ?? ""}
+        itemType="competition"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </>
   );
 }

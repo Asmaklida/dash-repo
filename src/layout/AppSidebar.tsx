@@ -3,7 +3,6 @@ import { Link, useLocation } from "react-router";
 
 // Assume these icons are imported from an icon library
 import {
-  BoxIcon,
   CalenderIcon,
   ChevronDownIcon,
   ChevronLeftIcon,
@@ -11,7 +10,7 @@ import {
   GroupIcon,
   HorizontaLDots,
   ListIcon,
-  UserCircleIcon,
+  StadiumIcon,
 } from "../icons";
 import { useSidebar } from "../context/SidebarContext";
 
@@ -29,7 +28,7 @@ const navItems: NavItem[] = [
     path: "/",
   },
   {
-    icon: <BoxIcon />,
+    icon: <StadiumIcon />,
     name: "Stadiums",
     path: "/studiums",
   },
@@ -54,13 +53,6 @@ const navItems: NavItem[] = [
 ];
 
 
-const othersNavItems: NavItem[] = [
-  {
-    icon: <UserCircleIcon />,
-    name: "Profile",
-    path: "/profile",
-  },
-];
 
 const AppSidebar: React.FC = () => {
   const { isExpanded, toggleSidebar, isMobileOpen } = useSidebar();
@@ -300,22 +292,6 @@ const AppSidebar: React.FC = () => {
                 )}
               </h2>
               {renderMenuItems(navItems, "main")}
-            </div>
-
-            <div className="mt-6">
-              <h2
-                className={`mb-4 text-xs uppercase flex leading-[20px] text-gray-400 ${!isExpanded
-                  ? "lg:justify-center"
-                  : "justify-start"
-                  }`}
-              >
-                {isExpanded || isMobileOpen ? (
-                  "Others"
-                ) : (
-                  <HorizontaLDots className="size-6" />
-                )}
-              </h2>
-              {renderMenuItems(othersNavItems, "others")}
             </div>
           </div>
         </nav>

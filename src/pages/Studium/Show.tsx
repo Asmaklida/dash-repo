@@ -4,12 +4,15 @@ import PaginatedTable from "../../components/tables/PaginatedTable";
 import Create from "./Create";
 import { useModal } from "../../hooks/useModal";
 import { useLocation } from "react-router";
+import { useData } from "../../context/DataContext";
 import { faBuilding, faUsersRectangle, faCity, faCircleDot, faSearch, faFilter, faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal";
 
 interface Studium {
   id: string;
   name: string;
+  image?: string;
   address: string;
   city: string;
   country: string;
@@ -90,7 +93,9 @@ export default function Show() {
   const [searchTerm, setSearchTerm] = useState("");
   const pageSize = 8;
   const { isOpen, openModal, closeModal } = useModal();
+  const { addActivity } = useData();
   const location = useLocation();
+  const [deleteTarget, setDeleteTarget] = useState<Studium | null>(null);
 
   useEffect(() => {
     if (location.state?.openModal) {
@@ -119,7 +124,15 @@ export default function Show() {
   };
 
   const handleDelete = (id: string) => {
-    setStadiums(stadiums.filter(s => s.id !== id));
+    const stadium = stadiums.find(s => s.id === id);
+    if (stadium) setDeleteTarget(stadium);
+  };
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    setStadiums(stadiums.filter(s => s.id !== deleteTarget.id));
+    addActivity("warning", `Stadium '${deleteTarget.name}' decommissioned`);
+    setDeleteTarget(null);
   };
 
   const [statusFilter, setStatusFilter] = useState<string>("All");
@@ -143,8 +156,12 @@ export default function Show() {
       header: "NAME",
       render: (row: Studium) => (
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/5">
-            <FontAwesomeIcon icon={faBuilding} className="text-gray-400 dark:text-gray-500 text-sm" />
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/5 overflow-hidden">
+            {row.image ? (
+              <img src={row.image} alt={row.name} className="h-full w-full object-cover" />
+            ) : (
+              <FontAwesomeIcon icon={faBuilding} className="text-gray-400 dark:text-gray-500 text-sm" />
+            )}
           </div>
           <div>
             <p className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{row.name}</p>
@@ -370,6 +387,13 @@ export default function Show() {
         onAddStadium={handleAddStadium}
         onUpdateStadium={handleUpdateStadium}
         stadium={editingStadium}
+      />
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        itemName={deleteTarget?.name ?? ""}
+        itemType="stadium"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
       />
     </>
   );

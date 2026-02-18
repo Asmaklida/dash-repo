@@ -3,6 +3,9 @@ import PageMeta from "../../components/common/PageMeta";
 import { useModal } from "../../hooks/useModal";
 import { useLocation } from "react-router";
 import Create from "./Create";
+import { useData } from "../../context/DataContext";
+import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal";
+
 import { faFlag, faGlobe, faCircleDot, faEarthAmericas, faEarthAfrica, faEarthEurope, faPenToSquare, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -16,7 +19,9 @@ const ITEMS_PER_PAGE = 8;
 
 function Show() {
   const { isOpen, openModal, closeModal } = useModal();
+  const { addActivity } = useData();
   const location = useLocation();
+  const [deleteTarget, setDeleteTarget] = useState<Country | null>(null);
   const [editingItem, setEditingItem] = useState<Country | null>(null);
 
   const [countries, setCountries] = useState<Country[]>([
@@ -54,10 +59,17 @@ function Show() {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this country record?")) {
-      setCountries(prev => prev.filter(c => c.id !== id));
-    }
+    const country = countries.find(c => c.id === id);
+    if (country) setDeleteTarget(country);
   };
+
+  const confirmDelete = () => {
+    if (!deleteTarget) return;
+    setCountries(prev => prev.filter(c => c.id !== deleteTarget.id));
+    addActivity("warning", `Country '${deleteTarget.name}' removed from registry`);
+    setDeleteTarget(null);
+  };
+
 
   const handleSave = (item: any) => {
     if (editingItem) {
@@ -166,6 +178,13 @@ function Show() {
       </div>
 
       <Create isOpen={isOpen} closeModal={closeModal} editingItem={editingItem} onSave={handleSave} />
+      <DeleteConfirmModal
+        isOpen={!!deleteTarget}
+        itemName={deleteTarget?.name ?? ""}
+        itemType="country"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </>
   );
 }

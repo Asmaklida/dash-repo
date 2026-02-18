@@ -4,6 +4,7 @@ import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import Select from "../../components/form/Select";
 import Button from "../../components/ui/button/Button";
+import PhotoUpload from "../../components/form/PhotoUpload";
 import { useData } from "../../context/DataContext";
 
 interface Props {
@@ -23,6 +24,7 @@ export default function Create({ isOpen, closeModal, editingItem, onSave }: Prop
     country: "",
     continent: "",
     description: "",
+    image: "",
   });
 
   useEffect(() => {
@@ -35,6 +37,7 @@ export default function Create({ isOpen, closeModal, editingItem, onSave }: Prop
         country: editingItem.country,
         continent: editingItem.continent,
         description: editingItem.description || "",
+        image: editingItem.image || "",
       });
     } else {
       setForm({
@@ -45,6 +48,7 @@ export default function Create({ isOpen, closeModal, editingItem, onSave }: Prop
         country: "",
         continent: "",
         description: "",
+        image: "",
       });
     }
   }, [editingItem, isOpen]);
@@ -77,6 +81,12 @@ export default function Create({ isOpen, closeModal, editingItem, onSave }: Prop
           <h5 className="text-xl font-semibold text-gray-800 dark:text-white/90">
             {editingItem ? "Edit Competition" : "Add Competition"}
           </h5>
+
+          <PhotoUpload
+            label="Competition Logo / Banner"
+            value={form.image}
+            onChange={(value) => handleChange("image", value)}
+          />
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>

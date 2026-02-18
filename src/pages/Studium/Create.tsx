@@ -4,6 +4,7 @@ import Label from "../../components/form/Label";
 import Input from "../../components/form/input/InputField";
 import Select from "../../components/form/Select";
 import Button from "../../components/ui/button/Button";
+import PhotoUpload from "../../components/form/PhotoUpload";
 
 interface Props {
   isOpen: boolean;
@@ -25,6 +26,7 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
     capacity: "",
     constructionYear: "",
     description: "",
+    image: "",
     zones: [
       {
         name: "",
@@ -44,6 +46,7 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
         capacity: stadium.capacity.toString(),
         constructionYear: stadium.constructionYear.toString(),
         description: stadium.description,
+        image: stadium.image || "",
         zones: stadium.seatingCategories.map((cat: string) => ({
           name: cat,
           capacity: "",
@@ -59,6 +62,7 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
         capacity: "",
         constructionYear: "",
         description: "",
+        image: "",
         zones: [{ name: "", capacity: "", description: "" }],
       });
     }
@@ -98,6 +102,7 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
       capacity: parseInt(form.capacity),
       constructionYear: parseInt(form.constructionYear) || new Date().getFullYear(),
       description: form.description,
+      image: form.image,
       status: stadium ? stadium.status : ("Active" as const),
       seatingCategories: form.zones.filter(z => z.name).map(z => z.name),
     };
@@ -186,6 +191,14 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
               {stadium ? "Modify the venue technical details." : "Fill the information below to create a new studium."}
             </p>
           </div>
+
+          {/* Photo Upload Section */}
+          <PhotoUpload
+            label="Stadium Photo"
+            value={form.image}
+            onChange={(value) => handleChange("image", value)}
+            className="mb-6"
+          />
 
           {/* Main Fields */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
