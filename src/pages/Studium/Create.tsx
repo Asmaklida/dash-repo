@@ -17,7 +17,7 @@ interface Props {
 import { useData } from "../../context/DataContext";
 
 export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadium, stadium }: Props) {
-  const { addActivity, incrementStat } = useData();
+  const { addActivity } = useData();
   const [form, setForm] = useState({
     name: "",
     address: "",
@@ -34,6 +34,7 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
         description: "",
       },
     ],
+    status: "Active" as "Active" | "Maintenance" | "Renovation",
   });
 
   useEffect(() => {
@@ -52,6 +53,7 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
           capacity: "",
           description: "",
         })),
+        status: stadium.status,
       });
     } else {
       setForm({
@@ -64,6 +66,7 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
         description: "",
         image: "",
         zones: [{ name: "", capacity: "", description: "" }],
+        status: "Active" as const,
       });
     }
   }, [stadium, isOpen]);
@@ -103,7 +106,7 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
       constructionYear: parseInt(form.constructionYear) || new Date().getFullYear(),
       description: form.description,
       image: form.image,
-      status: stadium ? stadium.status : ("Active" as const),
+      status: form.status,
       seatingCategories: form.zones.filter(z => z.name).map(z => z.name),
     };
 
@@ -113,7 +116,6 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
     } else {
       onAddStadium(stadiumData);
       addActivity("add", `New stadium '${form.name}' construction complete`);
-      incrementStat("stadiums");
     }
 
     closeModal();
@@ -185,10 +187,10 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
           {/* Header */}
           <div>
             <h5 className="text-xl font-semibold text-gray-800 dark:text-white/90">
-              {stadium ? "Update Studium" : "Add Studium"}
+              {stadium ? "Update Stadium" : "Add Stadium"}
             </h5>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {stadium ? "Modify the venue technical details." : "Fill the information below to create a new studium."}
+              {stadium ? "Modify the venue technical details." : "Fill the information below to create a new stadium."}
             </p>
           </div>
 
@@ -203,7 +205,7 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
           {/* Main Fields */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             <div>
-              <Label>Studium Name</Label>
+              <Label>Stadium Name</Label>
               <Input
                 type="text"
                 value={form.name}
@@ -238,6 +240,21 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
                 placeholder="Select city"
                 value={form.cityId}
                 onChange={(value) => handleChange("cityId", value)}
+                className="dark:bg-dark-900"
+              />
+            </div>
+
+            <div>
+              <Label>Operational Status</Label>
+              <Select
+                options={[
+                  { value: "Active", label: "Active" },
+                  { value: "Maintenance", label: "Maintenance" },
+                  { value: "Renovation", label: "Renovation" },
+                ]}
+                placeholder="Select status"
+                value={form.status}
+                onChange={(value) => handleChange("status", value)}
                 className="dark:bg-dark-900"
               />
             </div>
@@ -328,7 +345,7 @@ export default function Create({ isOpen, closeModal, onAddStadium, onUpdateStadi
         {/* Footer */}
         <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-200 dark:border-gray-700">
           <Button variant="outline" onClick={closeModal}>Cancel</Button>
-          <Button onClick={handleSubmit}>{stadium ? "Update Studium" : "Add Studium"}</Button>
+          <Button onClick={handleSubmit}>{stadium ? "Update Stadium" : "Add Stadium"}</Button>
         </div>
       </div>
     </Modal>

@@ -133,7 +133,7 @@ export default function UserProfile() {
                                 </div>
 
                                 <h2 className="text-xl font-bold text-gray-800 dark:text-white/90">{user.name}</h2>
-                                <div className="mt-3 px-4 py-1.5 text-[10px] font-bold text-white bg-orange-600 rounded-full uppercase tracking-widest">
+                                <div className="mt-3 px-4 py-1.5 text-[10px] font-bold text-blue-600 bg-blue-500/10 dark:text-blue-400 dark:bg-blue-500/15 rounded-full uppercase tracking-widest border border-blue-500/20">
                                     {user.role}
                                 </div>
 
@@ -265,7 +265,7 @@ export default function UserProfile() {
                                     <Button
                                         type="submit"
                                         disabled={isSaving}
-                                        className="bg-gray-900 hover:bg-gray-800 text-white px-10 rounded-2xl font-bold h-12 transition-all shadow-lg hover:shadow-xl active:scale-95 disabled:opacity-70"
+                                        className="bg-blue-600 hover:bg-blue-700 text-white px-10 rounded-2xl font-bold h-12 transition-all shadow-[0_8px_20px_-4px_rgba(37,99,235,0.35)] hover:shadow-[0_12px_24px_-4px_rgba(37,99,235,0.45)] active:scale-95 disabled:opacity-70"
                                     >
                                         {isSaving ? "Saving..." : "Update Profile"}
                                     </Button>
@@ -294,7 +294,7 @@ export default function UserProfile() {
                                 </ul>
                                 <button
                                     onClick={openModal}
-                                    className="w-full mt-6 py-3.5 text-sm font-bold text-gray-900 bg-white border-2 border-gray-900 rounded-2xl hover:bg-gray-50 dark:bg-transparent dark:border-gray-700 dark:text-gray-300 dark:hover:bg-white/[0.03] transition-all active:scale-[0.98]"
+                                    className="w-full mt-6 py-3.5 text-sm font-bold text-blue-600 bg-blue-500/10 border-2 border-blue-500/20 rounded-2xl hover:bg-blue-500/15 dark:text-blue-400 dark:border-blue-500/30 dark:hover:bg-blue-500/10 transition-all active:scale-[0.98]"
                                 >
                                     Manage Password
                                 </button>
@@ -386,7 +386,7 @@ export default function UserProfile() {
                             <Button
                                 type="submit"
                                 disabled={isPasswordSaving}
-                                className="flex-1 bg-gray-900 hover:bg-gray-800 text-white rounded-2xl font-bold h-12 transition-all shadow-lg"
+                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold h-12 transition-all shadow-[0_8px_20px_-4px_rgba(37,99,235,0.35)]"
                             >
                                 {isPasswordSaving ? "Updating..." : "Update Password"}
                             </Button>

@@ -31,19 +31,27 @@ export const useRealTimeStats = () => {
             ...prev,
             competitions: {
                 value: appStats.competitions,
-                change: `+${((appStats.competitions - 20) / 20 * 100).toFixed(1)}%`
+                change: "+1.2%"
             },
             teams: {
                 value: appStats.teams,
-                change: `+${((appStats.teams - 150) / 150 * 100).toFixed(1)}%`
+                change: "+2.4%"
             },
             matches: {
                 value: appStats.matches,
-                change: `+${((appStats.matches - 340) / 340 * 100).toFixed(1)}%`
+                change: "+0.8%"
             },
             stadiums: {
                 value: appStats.stadiums,
-                change: `+${((appStats.stadiums - 85) / 85 * 100).toFixed(1)}%`
+                change: "+1.5%"
+            },
+            cities: {
+                value: appStats.cities,
+                change: "+0.5%"
+            },
+            countries: {
+                value: appStats.countries,
+                change: "+0.2%"
             }
         }));
     }, [appStats]);

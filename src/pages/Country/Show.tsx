@@ -9,30 +9,16 @@ import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal";
 import { faFlag, faGlobe, faCircleDot, faEarthAmericas, faEarthAfrica, faEarthEurope, faPenToSquare, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-interface Country {
-  id: string;
-  name: string;
-  continentName: string;
-}
+import type { Country } from "../../context/DataContext";
 
 const ITEMS_PER_PAGE = 8;
 
 function Show() {
+  const { countries, setCountries, addActivity } = useData();
   const { isOpen, openModal, closeModal } = useModal();
-  const { addActivity } = useData();
   const location = useLocation();
   const [deleteTarget, setDeleteTarget] = useState<Country | null>(null);
   const [editingItem, setEditingItem] = useState<Country | null>(null);
-
-  const [countries, setCountries] = useState<Country[]>([
-    { id: "1", name: "Morocco", continentName: "AFRICA" },
-    { id: "2", name: "Germany", continentName: "EUROPE" },
-    { id: "3", name: "Brazil", continentName: "SOUTH AMERICA" },
-    { id: "4", name: "Japan", continentName: "ASIA" },
-    { id: "5", name: "Canada", continentName: "NORTH AMERICA" },
-    { id: "6", name: "Australia", continentName: "OCEANIA" },
-    { id: "7", name: "Egypt", continentName: "AFRICA" },
-  ]);
 
   useEffect(() => {
     if (location.state?.openModal) {
@@ -96,11 +82,6 @@ function Show() {
 
       {/* Premium Command Header */}
       <div className="mb-10 group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-theme-xl dark:border-white/5 dark:bg-[#0f172a] lg:p-10">
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-500/20 blur-[80px]"></div>
-          <div className="absolute top-1/2 left-1/4 h-48 w-48 rounded-full bg-indigo-500/10 blur-[60px]"></div>
-        </div>
-
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 dark:border-white/10 dark:bg-white/5 backdrop-blur-md">
@@ -132,7 +113,6 @@ function Show() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
         {paginatedData.map((country) => (
           <div key={country.id} className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-theme-md transition-all hover:-translate-y-1 hover:shadow-theme-xl dark:border-white/5 dark:bg-gray-dark/80 backdrop-blur-sm">
-            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-blue-500/5 blur-3xl group-hover:bg-blue-500/10 transition-colors"></div>
 
             <div className="flex items-start justify-between mb-6">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-500 shadow-inner group-hover:scale-110 transition-transform">

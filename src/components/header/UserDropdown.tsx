@@ -58,7 +58,7 @@ export default function UserDropdown() {
           <span className="block mt-0.5 text-theme-xs text-gray-500 dark:text-gray-400">
             {user.email}
           </span>
-          <span className="mt-3 px-3 py-1 text-xs font-semibold text-white bg-orange-600 rounded-full">
+          <span className="mt-4 px-3 py-1 text-[10px] font-bold text-blue-600 bg-blue-500/10 dark:text-blue-400 dark:bg-blue-500/15 rounded-full uppercase tracking-widest border border-blue-500/20">
             {user.role}
           </span>
         </div>

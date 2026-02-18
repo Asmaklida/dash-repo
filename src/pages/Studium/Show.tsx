@@ -5,97 +5,21 @@ import Create from "./Create";
 import { useModal } from "../../hooks/useModal";
 import { useLocation } from "react-router";
 import { useData } from "../../context/DataContext";
+import type { Stadium } from "../../context/DataContext";
 import { faBuilding, faUsersRectangle, faCity, faCircleDot, faSearch, faFilter, faPenToSquare, faTrashCan } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal";
 
-interface Studium {
-  id: string;
-  name: string;
-  image?: string;
-  address: string;
-  city: string;
-  country: string;
-  capacity: number;
-  constructionYear: number;
-  description: string;
-  status: "Active" | "Maintenance" | "Renovation";
-  seatingCategories: string[];
-}
-
-const fakeData: Studium[] = [
-  {
-    id: "1",
-    name: "Camp Nou",
-    address: "C. d'Arístides Maillol, 12",
-    city: "Barcelona",
-    country: "Spain",
-    capacity: 99354,
-    constructionYear: 1957,
-    description: "The historic home of FC Barcelona.",
-    status: "Active",
-    seatingCategories: ["VIP", "Cat 1", "Cat 2", "Tribune Sud"],
-  },
-  {
-    id: "2",
-    name: "Santiago Bernabéu",
-    address: "Av. de Concha Espina, 1",
-    city: "Madrid",
-    country: "Spain",
-    capacity: 81044,
-    constructionYear: 1947,
-    description: "The historic home of Real Madrid.",
-    status: "Renovation",
-    seatingCategories: ["VIP", "Premium", "Standard"],
-  },
-  {
-    id: "3",
-    name: "Old Trafford",
-    address: "Sir Matt Busby Way",
-    city: "Manchester",
-    country: "United Kingdom",
-    capacity: 74879,
-    constructionYear: 1910,
-    description: "The iconic Theatre of Dreams.",
-    status: "Active",
-    seatingCategories: ["VIP", "Cat 1", "Cat 2"],
-  },
-  {
-    id: "4",
-    name: "Allianz Arena",
-    address: "Werner-Heisenberg-Allee 25",
-    city: "Munich",
-    country: "Germany",
-    capacity: 75000,
-    constructionYear: 2005,
-    description: "A modern marvel of stadium design.",
-    status: "Active",
-    seatingCategories: ["VIP", "Premium", "Economy", "Tribune Nord"],
-  },
-  {
-    id: "5",
-    name: "Parc des Princes",
-    address: "24 Rue du Commandant Guilbaud",
-    city: "Paris",
-    country: "France",
-    capacity: 47929,
-    constructionYear: 1972,
-    description: "Historic stadium in Paris.",
-    status: "Active",
-    seatingCategories: ["VIP", "Cat 1"],
-  },
-];
 
 export default function Show() {
-  const [stadiums, setStadiums] = useState<Studium[]>(fakeData);
-  const [editingStadium, setEditingStadium] = useState<Studium | null>(null);
+  const { stadiums, setStadiums, addActivity } = useData();
+  const [editingStadium, setEditingStadium] = useState<Stadium | null>(null);
   const [page, setPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState("");
   const pageSize = 8;
   const { isOpen, openModal, closeModal } = useModal();
-  const { addActivity } = useData();
   const location = useLocation();
-  const [deleteTarget, setDeleteTarget] = useState<Studium | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Stadium | null>(null);
 
   useEffect(() => {
     if (location.state?.openModal) {
@@ -104,16 +28,16 @@ export default function Show() {
     }
   }, [location.state, openModal]);
 
-  const handleAddStadium = (newStadium: Studium) => {
+  const handleAddStadium = (newStadium: Stadium) => {
     setStadiums([newStadium, ...stadiums]);
   };
 
-  const handleEdit = (stadium: Studium) => {
+  const handleEdit = (stadium: Stadium) => {
     setEditingStadium(stadium);
     openModal();
   };
 
-  const handleUpdateStadium = (updatedStadium: Studium) => {
+  const handleUpdateStadium = (updatedStadium: Stadium) => {
     setStadiums(stadiums.map(s => s.id === updatedStadium.id ? updatedStadium : s));
     setEditingStadium(null);
   };
@@ -154,7 +78,7 @@ export default function Show() {
   const columns = [
     {
       header: "NAME",
-      render: (row: Studium) => (
+      render: (row: Stadium) => (
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-gray-100 bg-gray-50/50 dark:border-white/5 dark:bg-white/5 overflow-hidden">
             {row.image ? (
@@ -172,7 +96,7 @@ export default function Show() {
     },
     {
       header: "CITY",
-      render: (row: Studium) => (
+      render: (row: Stadium) => (
         <div className="flex items-center gap-2">
           <div className="h-1.5 w-1.5 rounded-full bg-emerald-500/50"></div>
           <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{row.city}</p>
@@ -181,7 +105,7 @@ export default function Show() {
     },
     {
       header: "CAPACITY",
-      render: (row: Studium) => (
+      render: (row: Stadium) => (
         <div className="inline-flex items-center gap-2 bg-gray-50/50 dark:bg-white/5 px-3 py-1.5 rounded-lg border border-gray-100 dark:border-white/5">
           <p className="font-mono text-xs font-bold text-gray-700 dark:text-gray-200 tracking-tight">
             {row.capacity.toLocaleString()}
@@ -192,7 +116,7 @@ export default function Show() {
     },
     {
       header: "SEATING CATEGORIES",
-      render: (row: Studium) => (
+      render: (row: Stadium) => (
         <div className="flex flex-wrap gap-2">
           {row.seatingCategories.map((cat, idx) => (
             <span key={idx} className="inline-flex items-center rounded-full bg-white/[0.03] px-3 py-1 text-[10px] font-bold text-gray-500 dark:text-gray-400 border border-gray-200/50 dark:border-white/10 shadow-sm backdrop-blur-md transition-all hover:border-emerald-500/30 hover:text-emerald-500">
@@ -204,7 +128,7 @@ export default function Show() {
     },
     {
       header: "ACTIONS",
-      render: (row: Studium) => (
+      render: (row: Stadium) => (
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleEdit(row)}
@@ -229,15 +153,10 @@ export default function Show() {
 
       {/* Premium Command Header */}
       <div className="mb-10 group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-theme-xl dark:border-white/5 dark:bg-[#0f172a] lg:p-10">
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/20 blur-[80px]"></div>
-          <div className="absolute top-1/2 left-1/4 h-48 w-48 rounded-full bg-cyan-500/10 blur-[60px]"></div>
-        </div>
-
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 dark:border-white/10 dark:bg-white/5 backdrop-blur-md">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">Venue Management</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">Venue Management</span>
             </div>
             <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-900 dark:text-white lg:text-4xl">
               Football <span className="text-emerald-500">Arenas.</span>
@@ -247,13 +166,13 @@ export default function Show() {
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="hidden items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 dark:border-emerald-500/10 dark:bg-emerald-500/5 backdrop-blur-sm lg:flex">
-              <FontAwesomeIcon icon={faCircleDot} className="h-1.5 w-1.5 animate-pulse text-emerald-500" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Live Monitoring</span>
+            <div className="hidden items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1.5 dark:border-blue-500/10 dark:bg-blue-500/5 backdrop-blur-sm lg:flex">
+              <FontAwesomeIcon icon={faCircleDot} className="h-1.5 w-1.5 animate-pulse text-blue-500" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">Live Monitoring</span>
             </div>
             <button
               onClick={openModal}
-              className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all hover:bg-emerald-600 hover:scale-105 active:scale-95"
+              className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-[0_8px_20px_-4px_rgba(37,99,235,0.35)] transition-all hover:bg-blue-700 hover:scale-105 active:scale-95"
             >
               Initialize Venue
             </button>
@@ -265,13 +184,13 @@ export default function Show() {
         {/* Command Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="group relative overflow-hidden rounded-2xl border border-gray-200/50 bg-white p-6 shadow-theme-md transition-all dark:border-gray-800 dark:bg-gray-dark/80">
-            <div className="absolute top-0 left-0 h-1 w-full bg-emerald-500"></div>
+            <div className="absolute top-0 left-0 h-1 w-full bg-blue-500"></div>
             <div className="relative z-10 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Total Stadiums</p>
                 <h4 className="mt-2 text-3xl font-black text-gray-900 dark:text-white">{stadiums.length}</h4>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-500 shadow-inner group-hover:scale-110 transition-transform">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 shadow-inner group-hover:scale-110 transition-transform">
                 <FontAwesomeIcon icon={faBuilding} className="h-6 w-6" />
               </div>
             </div>

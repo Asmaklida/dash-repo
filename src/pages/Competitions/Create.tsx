@@ -15,7 +15,7 @@ interface Props {
 }
 
 export default function Create({ isOpen, closeModal, editingItem, onSave }: Props) {
-  const { addActivity, incrementStat } = useData();
+  const { addActivity } = useData();
   const [form, setForm] = useState({
     name: "",
     abbreviation: "",
@@ -60,7 +60,6 @@ export default function Create({ isOpen, closeModal, editingItem, onSave }: Prop
   const handleSubmit = () => {
     onSave(form);
     addActivity(editingItem ? "info" : "add", `${editingItem ? "Updated" : "Added"} competition '${form.name}'`);
-    if (!editingItem) incrementStat("competitions");
   };
 
   const teamTypeOptions = [

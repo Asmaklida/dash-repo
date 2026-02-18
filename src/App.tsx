@@ -10,7 +10,7 @@ import { clubroutes } from "./pages/Clubs/routes";
 import { matchRoutes } from "./pages/Matchs/routes";
 import { cityRoutes } from "./pages/City/routes";
 import { countryRoutes } from "./pages/Country/routes";
-import { studiumRoutes } from "./pages/Studium/routes";
+import { stadiumRoutes } from "./pages/Studium/routes";
 import { userProfileRoutes } from "./pages/UserProfiles/routes";
 import { UserProvider } from "./context/UserContext";
 import { DataProvider } from "./context/DataContext";
@@ -31,7 +31,7 @@ export default function App() {
               {matchRoutes}
               {cityRoutes}
               {countryRoutes}
-              {studiumRoutes}
+              {stadiumRoutes}
               {userProfileRoutes}
             </Route>
 

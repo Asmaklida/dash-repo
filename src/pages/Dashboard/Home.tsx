@@ -37,10 +37,10 @@ export default function Home() {
       change: rtStats.competitions.change,
       icon: faTrophy,
       path: "/competitions",
-      borderClass: "bg-brand-500",
-      gradient: "from-brand-500/20 to-brand-600/20",
-      accent: "text-brand-500",
-      shadow: "shadow-brand-500/10",
+      borderClass: "bg-blue-600",
+      gradient: "from-blue-600/20 to-blue-700/20",
+      accent: "text-blue-600",
+      shadow: "shadow-blue-600/10",
     },
     {
       title: "Total Teams",
@@ -48,10 +48,10 @@ export default function Home() {
       change: rtStats.teams.change,
       icon: faUsers,
       path: "/clubs",
-      borderClass: "bg-success-500",
-      gradient: "from-success-500/20 to-success-600/20",
-      accent: "text-success-500",
-      shadow: "shadow-success-500/10",
+      borderClass: "bg-blue-500",
+      gradient: "from-blue-500/20 to-blue-600/20",
+      accent: "text-blue-500",
+      shadow: "shadow-blue-500/10",
     },
     {
       title: "Total Matches",
@@ -59,10 +59,10 @@ export default function Home() {
       change: rtStats.matches.change,
       icon: faCalendarDays,
       path: "/matchs",
-      borderClass: "bg-warning-500",
-      gradient: "from-warning-500/20 to-warning-600/20",
-      accent: "text-warning-500",
-      shadow: "shadow-warning-500/10",
+      borderClass: "bg-indigo-600",
+      gradient: "from-indigo-600/20 to-indigo-700/20",
+      accent: "text-indigo-600",
+      shadow: "shadow-indigo-600/10",
     },
     {
       title: "Total Stadiums",
@@ -70,10 +70,10 @@ export default function Home() {
       change: rtStats.stadiums.change,
       icon: faBuilding,
       path: "/studiums",
-      borderClass: "bg-blue-light-500",
-      gradient: "from-blue-light-500/20 to-blue-light-600/20",
-      accent: "text-blue-light-500",
-      shadow: "shadow-blue-light-500/10",
+      borderClass: "bg-cyan-600",
+      gradient: "from-cyan-600/20 to-cyan-700/20",
+      accent: "text-cyan-600",
+      shadow: "shadow-cyan-600/10",
     },
     {
       title: "Total Cities",
@@ -81,10 +81,10 @@ export default function Home() {
       change: rtStats.cities.change,
       icon: faCity,
       path: "/city",
-      borderClass: "bg-cyan-500",
-      gradient: "from-cyan-500/20 to-cyan-600/20",
-      accent: "text-cyan-500",
-      shadow: "shadow-cyan-500/10",
+      borderClass: "bg-sky-600",
+      gradient: "from-sky-600/20 to-sky-700/20",
+      accent: "text-sky-600",
+      shadow: "shadow-sky-600/10",
     },
     {
       title: "Total Countries",
@@ -92,10 +92,10 @@ export default function Home() {
       change: rtStats.countries.change,
       icon: faEarthAmericas,
       path: "/country",
-      borderClass: "bg-violet-500",
-      gradient: "from-violet-500/20 to-violet-600/20",
-      accent: "text-violet-500",
-      shadow: "shadow-violet-500/10",
+      borderClass: "bg-blue-700",
+      gradient: "from-blue-700/20 to-blue-800/20",
+      accent: "text-blue-700",
+      shadow: "shadow-blue-700/10",
     },
   ];
 
@@ -104,37 +104,37 @@ export default function Home() {
       label: "Add Competition",
       icon: faPlus,
       path: "/competitions",
-      color: "brand",
-      accent: "text-brand-600",
-      glow: "group-hover:shadow-brand-500/10",
-      border: "hover:border-brand-500/30",
+      color: "blue",
+      accent: "text-blue-600",
+      glow: "group-hover:shadow-blue-500/10",
+      border: "hover:border-blue-500/30",
     },
     {
       label: "Add Team",
       icon: faFutbol,
       path: "/clubs",
-      color: "success",
-      accent: "text-success-600",
-      glow: "group-hover:shadow-success-500/10",
-      border: "hover:border-success-500/30",
+      color: "blue",
+      accent: "text-blue-700",
+      glow: "group-hover:shadow-blue-600/10",
+      border: "hover:border-blue-600/30",
     },
     {
       label: "Schedule Match",
       icon: faCalendarPlus,
       path: "/matchs",
-      color: "warning",
-      accent: "text-warning-600",
-      glow: "group-hover:shadow-warning-500/10",
-      border: "hover:border-warning-500/30",
+      color: "blue",
+      accent: "text-blue-500",
+      glow: "group-hover:shadow-blue-400/10",
+      border: "hover:border-blue-400/30",
     },
     {
       label: "Add Stadium",
       icon: faLocationDot,
       path: "/studiums",
-      color: "blue-light",
-      accent: "text-blue-light-600",
-      glow: "group-hover:shadow-blue-light-500/10",
-      border: "hover:border-blue-light-500/30",
+      color: "blue",
+      accent: "text-blue-800",
+      glow: "group-hover:shadow-blue-700/10",
+      border: "hover:border-blue-700/30",
     },
   ];
 
@@ -150,8 +150,8 @@ export default function Home() {
         {/* Enhanced Header Section */}
         <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white lg:text-3xl">
-              Football Admin Center
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white lg:text-3xl">
+              Football <span className="text-emerald-500">Center.</span>
             </h1>
             <p className="mt-1 text-gray-500 dark:text-gray-400">
               Your central hub for managing the football ecosystem.
@@ -180,11 +180,6 @@ export default function Home() {
         {/* Premium Welcome Card */}
         <div className="group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-theme-xl dark:border-white/5 dark:bg-[#0f172a] lg:p-12">
           {/* Refined Geometric Background */}
-          <div className="absolute inset-0 opacity-40">
-            <div className="absolute -right-20 -top-20 h-96 w-96 rounded-full bg-brand-500/20 blur-[100px] transition-all group-hover:bg-brand-500/30"></div>
-            <div className="absolute -bottom-20 -left-20 h-96 w-96 rounded-full bg-indigo-500/10 blur-[100px]"></div>
-            <div className="absolute top-1/2 left-1/4 h-64 w-64 rounded-full bg-blue-500/5 blur-[80px]"></div>
-          </div>
 
           <div className="relative z-10 grid gap-8 lg:grid-cols-2 lg:items-center">
             <div>
@@ -192,7 +187,7 @@ export default function Home() {
                 <span className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400">System v2.4 - Season 2026</span>
               </div>
               <h2 className="mt-6 text-4xl font-black tracking-tight text-slate-900 dark:text-white lg:text-5xl">
-                Command <span className="text-brand-500">Center.</span>
+                Command <span className="text-emerald-500">Center.</span>
               </h2>
               <p className="mt-4 text-lg text-slate-500 dark:text-slate-400 lg:max-w-md antialiased font-medium">
                 The centralized operational interface for football administration. Monitor live flows and system metrics in real-time.
@@ -200,7 +195,7 @@ export default function Home() {
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link
                   to="/matchs"
-                  className="rounded-xl bg-brand-500 px-8 py-4 text-sm font-bold text-white shadow-[0_0_20px_rgba(59,130,246,0.4)] transition-all hover:bg-brand-600 hover:scale-105 active:scale-95"
+                  className="rounded-xl bg-blue-600 px-8 py-4 text-sm font-bold text-white shadow-[0_8px_20px_-4px_rgba(37,99,235,0.35)] transition-all hover:bg-blue-700 hover:scale-105 active:scale-95"
                 >
                   Live Monitor
                 </Link>
@@ -218,9 +213,6 @@ export default function Home() {
                   icon={faFutbol}
                   className="h-64 w-64 text-white/5 animate-pulse"
                 />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-32 w-32 rounded-full bg-brand-500/10 blur-3xl animate-pulse"></div>
-                </div>
               </div>
             </div>
           </div>
@@ -302,7 +294,6 @@ export default function Home() {
 
 
                 {/* Subtle Decorative Elements */}
-                <div className={`absolute -right-4 -bottom-4 h-24 w-24 rounded-full bg-${action.color}-500/[0.03] blur-2xl transition-all group-hover:bg-${action.color}-500/10`}></div>
                 <div className="absolute inset-0 translate-y-full bg-gradient-to-b from-transparent via-white/5 to-transparent transition-transform duration-700 group-hover:translate-y-0"></div>
               </Link>
             ))}

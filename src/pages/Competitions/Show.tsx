@@ -5,66 +5,18 @@ import { useModal } from "../../hooks/useModal";
 import { useLocation } from "react-router";
 import Create from "./Create";
 import { useData } from "../../context/DataContext";
-import { faTrophy, faCheckCircle, faClock, faCircleDot, faEarthEurope, faPenToSquare, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { faTrophy, faCheckCircle, faCircleDot, faEarthEurope, faPenToSquare, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal";
 
-interface Competition {
-  id: string;
-  name: string;
-  image?: string;
-  abbreviation: string;
-  teamType: string;
-  scope: string;
-  country: string;
-  continent: string;
-}
+import type { Competition } from "../../context/DataContext";
 
 export default function Show() {
+  const { competitions, setCompetitions, addActivity } = useData();
   const { isOpen, openModal, closeModal } = useModal();
-  const { addActivity } = useData();
   const location = useLocation();
   const [deleteTarget, setDeleteTarget] = useState<Competition | null>(null);
   const [editingItem, setEditingItem] = useState<Competition | null>(null);
-
-  const [competitions, setCompetitions] = useState<Competition[]>([
-    {
-      id: "1",
-      name: "Champions League",
-      abbreviation: "UCL",
-      teamType: "CLUB",
-      scope: "INTERNATIONAL",
-      country: "Europe",
-      continent: "Europe",
-    },
-    {
-      id: "2",
-      name: "Premier League",
-      abbreviation: "EPL",
-      teamType: "CLUB",
-      scope: "DOMESTIC",
-      country: "England",
-      continent: "Europe",
-    },
-    {
-      id: "3",
-      name: "La Liga",
-      abbreviation: "LAL",
-      teamType: "CLUB",
-      scope: "DOMESTIC",
-      country: "Spain",
-      continent: "Europe",
-    },
-    {
-      id: "4",
-      name: "Botola Pro",
-      abbreviation: "BOT",
-      teamType: "CLUB",
-      scope: "DOMESTIC",
-      country: "Morocco",
-      continent: "Africa",
-    }
-  ]);
 
   useEffect(() => {
     if (location.state?.openModal) {
@@ -181,31 +133,26 @@ export default function Show() {
 
       {/* Premium Command Header */}
       <div className="mb-10 group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-theme-xl dark:border-white/5 dark:bg-[#0f172a] lg:p-10">
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-amber-500/20 blur-[80px]"></div>
-          <div className="absolute top-1/2 left-1/4 h-48 w-48 rounded-full bg-orange-500/10 blur-[60px]"></div>
-        </div>
-
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 dark:border-white/10 dark:bg-white/5 backdrop-blur-md">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-orange-600 dark:text-orange-400">Tournament Control</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">Tournament Control</span>
             </div>
             <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-900 dark:text-white lg:text-4xl">
-              League <span className="text-amber-500">Center.</span>
+              League <span className="text-emerald-500">Center.</span>
             </h2>
             <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-xl antialiased">
               Oversee and manage your global football tournaments and domestic leagues. Track participation and scope.
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="hidden items-center gap-2 rounded-full border border-orange-500/20 bg-orange-500/10 px-3 py-1.5 dark:border-orange-500/10 dark:bg-orange-500/5 backdrop-blur-sm lg:flex">
-              <FontAwesomeIcon icon={faCircleDot} className="h-1.5 w-1.5 animate-pulse text-orange-500" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-orange-600 dark:text-orange-400">Global Coverage</span>
+            <div className="hidden items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1.5 dark:border-blue-500/10 dark:bg-blue-500/5 backdrop-blur-sm lg:flex">
+              <FontAwesomeIcon icon={faCircleDot} className="h-1.5 w-1.5 animate-pulse text-blue-500" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">Global Coverage</span>
             </div>
             <button
               onClick={handleAddNew}
-              className="rounded-xl bg-amber-500 px-6 py-3 text-sm font-bold text-white shadow-[0_0_20px_rgba(245,158,11,0.3)] transition-all hover:bg-amber-600 hover:scale-105 active:scale-95"
+              className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-[0_8px_20px_-4px_rgba(37,99,235,0.35)] transition-all hover:bg-blue-700 hover:scale-105 active:scale-95"
             >
               <FontAwesomeIcon icon={faPlus} className="mr-2" />
               Register Competition
@@ -218,14 +165,14 @@ export default function Show() {
         {/* Command Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="group relative overflow-hidden rounded-2xl border border-gray-200/50 bg-white p-6 shadow-theme-md transition-all dark:border-gray-800 dark:bg-gray-dark/80">
-            <div className="absolute top-0 left-0 h-1 w-full bg-amber-500"></div>
+            <div className="absolute top-0 left-0 h-1 w-full bg-cyan-500"></div>
             <div className="relative z-10 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Total Leagues</p>
                 <h4 className="mt-2 text-3xl font-black text-gray-900 dark:text-white">42</h4>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-500 shadow-inner group-hover:scale-110 transition-transform">
-                <FontAwesomeIcon icon={faTrophy} className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-500 shadow-inner group-hover:scale-110 transition-transform">
+                <FontAwesomeIcon icon={faEarthEurope} className="h-6 w-6" />
               </div>
             </div>
           </div>
@@ -244,14 +191,14 @@ export default function Show() {
           </div>
 
           <div className="group relative overflow-hidden rounded-2xl border border-gray-200/50 bg-white p-6 shadow-theme-md transition-all dark:border-gray-800 dark:bg-gray-dark/80">
-            <div className="absolute top-0 left-0 h-1 w-full bg-orange-500"></div>
+            <div className="absolute top-0 left-0 h-1 w-full bg-blue-500"></div>
             <div className="relative z-10 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-widest text-gray-500">Upcoming Games</p>
                 <h4 className="mt-2 text-3xl font-black text-gray-900 dark:text-white">4</h4>
               </div>
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-500/10 text-orange-500 shadow-inner group-hover:scale-110 transition-transform">
-                <FontAwesomeIcon icon={faClock} className="h-6 w-6" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 shadow-inner group-hover:scale-110 transition-transform">
+                <FontAwesomeIcon icon={faTrophy} className="h-6 w-6" />
               </div>
             </div>
           </div>

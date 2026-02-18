@@ -9,62 +9,15 @@ import { faUsers, faShieldHalved, faEarthAfrica, faCircleDot, faPlus, faBuilding
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal";
 
-interface Team {
-  id: string;
-  name: string;
-  image?: string;
-  abbreviation: string;
-  teamType: string;
-  scope: string;
-  country: string;
-  continent: string;
-}
+import type { Club } from "../../context/DataContext";
 
 export default function Show() {
   const { isOpen, openModal, closeModal } = useModal();
-  const { addActivity } = useData();
+  const { clubs, setClubs, addActivity } = useData();
   const location = useLocation();
-  const [deleteTarget, setDeleteTarget] = useState<Team | null>(null);
-  const [editingItem, setEditingItem] = useState<Team | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Club | null>(null);
+  const [editingItem, setEditingItem] = useState<Club | null>(null);
 
-  const [clubs, setClubs] = useState<Team[]>([
-    {
-      id: "1",
-      name: "Raja Club Athletic",
-      abbreviation: "RCA",
-      teamType: "CLUB",
-      scope: "INTERNATIONAL",
-      country: "Morocco",
-      continent: "Africa",
-    },
-    {
-      id: "2",
-      name: "Real Madrid CF",
-      abbreviation: "RMA",
-      teamType: "CLUB",
-      scope: "INTERNATIONAL",
-      country: "Spain",
-      continent: "Europe",
-    },
-    {
-      id: "3",
-      name: "FC Barcelona",
-      abbreviation: "BAR",
-      teamType: "CLUB",
-      scope: "INTERNATIONAL",
-      country: "Spain",
-      continent: "Europe",
-    },
-    {
-      id: "4",
-      name: "Manchester City",
-      abbreviation: "MCI",
-      teamType: "CLUB",
-      scope: "INTERNATIONAL",
-      country: "UK",
-      continent: "Europe",
-    }
-  ]);
 
   useEffect(() => {
     if (location.state?.openModal) {
@@ -78,7 +31,7 @@ export default function Show() {
     openModal();
   };
 
-  const handleEdit = (item: Team) => {
+  const handleEdit = (item: Club) => {
     setEditingItem(item);
     openModal();
   };
@@ -107,7 +60,7 @@ export default function Show() {
   const columns = [
     {
       header: "TEAM",
-      render: (row: Team) => (
+      render: (row: Club) => (
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-blue-100 bg-blue-50/50 dark:border-white/5 dark:bg-white/5 overflow-hidden">
             {row.image ? (
@@ -125,7 +78,7 @@ export default function Show() {
     },
     {
       header: "LOCATION",
-      render: (row: Team) => (
+      render: (row: Club) => (
         <div className="flex items-center gap-2">
           <FontAwesomeIcon icon={faBuilding} className="text-gray-400 text-xs" />
           <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{row.country}</p>
@@ -134,7 +87,7 @@ export default function Show() {
     },
     {
       header: "SCOPE",
-      render: (row: Team) => (
+      render: (row: Club) => (
         <span className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold border backdrop-blur-md ${row.scope === "INTERNATIONAL"
           ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20 dark:text-emerald-400"
           : "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400"
@@ -145,7 +98,7 @@ export default function Show() {
     },
     {
       header: "CONTINENT",
-      render: (row: Team) => (
+      render: (row: Club) => (
         <span className="inline-flex items-center rounded-full bg-white/[0.03] px-3 py-1 text-[10px] font-bold text-gray-500 dark:text-gray-400 border border-gray-200/50 dark:border-white/10 shadow-sm transition-all hover:border-blue-500/30 hover:text-blue-500">
           {row.continent}
         </span>
@@ -153,7 +106,7 @@ export default function Show() {
     },
     {
       header: "ACTIONS",
-      render: (row: Team) => (
+      render: (row: Club) => (
         <div className="flex items-center gap-2">
           <button
             onClick={() => handleEdit(row)}
@@ -181,10 +134,6 @@ export default function Show() {
 
       {/* Premium Command Header */}
       <div className="mb-10 group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-theme-xl dark:border-white/5 dark:bg-[#0f172a] lg:p-10">
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-500/20 blur-[80px]"></div>
-          <div className="absolute top-1/2 left-1/4 h-48 w-48 rounded-full bg-cyan-500/10 blur-[60px]"></div>
-        </div>
 
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
@@ -192,7 +141,7 @@ export default function Show() {
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">Club Management</span>
             </div>
             <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-900 dark:text-white lg:text-4xl">
-              Shield <span className="text-blue-500">Registry.</span>
+              Shield <span className="text-emerald-500">Registry.</span>
             </h2>
             <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-xl antialiased">
               Manage professional football clubs, track their primary locations, and continental affiliations.

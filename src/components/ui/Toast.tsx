@@ -83,12 +83,12 @@ export default function Toast({ id, type, message, onRemove, duration = 5000 }: 
         <>
             <style>{`
                 @keyframes toast-slide-in {
-                    from { transform: translateX(110%); opacity: 0; }
-                    to   { transform: translateX(0);    opacity: 1; }
+                    from { transform: translateY(110%); opacity: 0; }
+                    to   { transform: translateY(0);    opacity: 1; }
                 }
-                @keyframes toast-slide-out {
-                    from { transform: translateX(0);    opacity: 1; }
-                    to   { transform: translateX(110%); opacity: 0; }
+                @keyframes toast-out {
+                    from { transform: scale(1); opacity: 1; }
+                    to   { transform: scale(0.9); opacity: 0; }
                 }
                 @keyframes toast-progress {
                     from { width: 100%; }
@@ -100,22 +100,22 @@ export default function Toast({ id, type, message, onRemove, duration = 5000 }: 
                 style={{
                     position: "relative",
                     overflow: "hidden",
-                    borderRadius: "16px",
+                    borderRadius: "20px",
                     border: `1px solid ${style.border}`,
-                    background: style.bg,
+                    background: "rgba(255, 255, 255, 0.7)",
                     backdropFilter: "blur(20px)",
                     WebkitBackdropFilter: "blur(20px)",
-                    boxShadow: "0 25px 50px -12px rgba(0,0,0,0.35)",
+                    boxShadow: "0 20px 40px -12px rgba(0,0,0,0.15)",
                     padding: "16px",
                     display: "flex",
                     alignItems: "flex-start",
                     gap: "14px",
-                    minWidth: "320px",
+                    minWidth: "340px",
                     maxWidth: "420px",
                     pointerEvents: "auto",
                     animation: isExiting
-                        ? "toast-slide-out 0.35s cubic-bezier(0.4,0,1,1) forwards"
-                        : "toast-slide-in 0.4s cubic-bezier(0,0,0.2,1) forwards",
+                        ? "toast-out 0.2s ease-in forwards"
+                        : "toast-slide-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards",
                 }}
             >
                 {/* Left accent bar */}

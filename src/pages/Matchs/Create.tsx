@@ -26,7 +26,7 @@ interface Stadium {
 }
 
 export default function Create({ isOpen, closeModal, editingItem, onSave }: Props) {
-  const { addActivity, incrementStat } = useData();
+  const { addActivity } = useData();
   const [form, setForm] = useState({
     dateTime: "",
     status: "SCHEDULED",
@@ -37,6 +37,7 @@ export default function Create({ isOpen, closeModal, editingItem, onSave }: Prop
     homeTeam: "",
     awayTeam: "",
     competition: "",
+    score: "",
     zonePricings: [] as { zoneId: string; price: number; availableSeats: number; isActive: boolean }[],
   });
 
@@ -63,6 +64,7 @@ export default function Create({ isOpen, closeModal, editingItem, onSave }: Prop
         homeTeam: editingItem.homeTeam,
         awayTeam: editingItem.awayTeam,
         competition: editingItem.competition,
+        score: editingItem.score || "",
         zonePricings: editingItem.zonePricings || [],
       });
       const stadium = stadiums.find(s => s.name === editingItem.stadiumName);
@@ -78,6 +80,7 @@ export default function Create({ isOpen, closeModal, editingItem, onSave }: Prop
         homeTeam: "",
         awayTeam: "",
         competition: "",
+        score: "",
         zonePricings: [],
       });
       setZones([]);
@@ -102,7 +105,6 @@ export default function Create({ isOpen, closeModal, editingItem, onSave }: Prop
   const handleSubmit = () => {
     onSave(form);
     addActivity(editingItem ? "info" : "add", `${editingItem ? "Updated" : "Scheduled"} match between ${form.homeTeam} and ${form.awayTeam}`);
-    if (!editingItem) incrementStat("matches");
   };
 
   const statusOptions = [
@@ -176,6 +178,11 @@ export default function Create({ isOpen, closeModal, editingItem, onSave }: Prop
             <div>
               <Label>Away Team</Label>
               <Input type="text" value={form.awayTeam} onChange={(e) => setForm({ ...form, awayTeam: e.target.value })} />
+            </div>
+
+            <div>
+              <Label>Score (e.g. 2 - 1)</Label>
+              <Input type="text" value={form.score} placeholder="0 - 0" onChange={(e) => setForm({ ...form, score: e.target.value })} />
             </div>
           </div>
 

@@ -9,42 +9,16 @@ import DeleteConfirmModal from "../../components/ui/DeleteConfirmModal";
 import { faCity, faMapPin, faBuildingColumns, faCircleDot, faPenToSquare, faTrashCan, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-interface CityData {
-  id: string;
-  name: string;
-  country: string;
-  continentName: string;
-}
+import type { City } from "../../context/DataContext";
 
 const ITEMS_PER_PAGE = 8;
 
 export const Show = () => {
+  const { cities, setCities, addActivity } = useData();
   const { isOpen, openModal, closeModal } = useModal();
-  const { addActivity } = useData();
   const location = useLocation();
-  const [deleteTarget, setDeleteTarget] = useState<CityData | null>(null);
-  const [editingItem, setEditingItem] = useState<CityData | null>(null);
-
-  const [cities, setCities] = useState<CityData[]>([
-    {
-      id: "1",
-      name: "Casablanca",
-      country: "Morocco",
-      continentName: "AFRICA",
-    },
-    {
-      id: "2",
-      name: "Berlin",
-      country: "Germany",
-      continentName: "EUROPE",
-    },
-    {
-      id: "3",
-      name: "Tokyo",
-      country: "Japan",
-      continentName: "ASIA",
-    },
-  ]);
+  const [deleteTarget, setDeleteTarget] = useState<City | null>(null);
+  const [editingItem, setEditingItem] = useState<City | null>(null);
 
   useEffect(() => {
     if (location.state?.openModal) {
@@ -65,7 +39,7 @@ export const Show = () => {
     openModal();
   };
 
-  const handleEdit = (item: CityData) => {
+  const handleEdit = (item: City) => {
     setEditingItem(item);
     openModal();
   };
@@ -98,31 +72,26 @@ export const Show = () => {
 
       {/* Premium Command Header */}
       <div className="mb-10 group relative overflow-hidden rounded-3xl border border-gray-200 bg-white p-8 shadow-theme-xl dark:border-white/5 dark:bg-[#0f172a] lg:p-10">
-        <div className="absolute inset-0 opacity-40">
-          <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-emerald-500/20 blur-[80px]"></div>
-          <div className="absolute top-1/2 left-1/4 h-48 w-48 rounded-full bg-cyan-500/10 blur-[60px]"></div>
-        </div>
-
         <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-gray-50 px-4 py-1.5 dark:border-white/10 dark:bg-white/5 backdrop-blur-md">
-              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-600 dark:text-emerald-400">Location Control</span>
+              <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-600 dark:text-blue-400">Location Control</span>
             </div>
             <h2 className="mt-4 text-3xl font-black tracking-tight text-slate-900 dark:text-white lg:text-4xl">
-              Metropolitan <span className="text-emerald-500">Hubs.</span>
+              Metropolitan <span className="text-blue-500">Hubs.</span>
             </h2>
             <p className="mt-2 text-slate-500 dark:text-slate-400 max-w-xl antialiased">
               Manage your network of global cities. Categorize by continent and assign to countries to build your operational map.
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="hidden items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1.5 dark:border-emerald-500/10 dark:bg-emerald-500/5 backdrop-blur-sm lg:flex">
-              <FontAwesomeIcon icon={faCircleDot} className="h-1.5 w-1.5 animate-pulse text-emerald-500" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 dark:text-emerald-400">Urban Analytics</span>
+            <div className="hidden items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-3 py-1.5 dark:border-blue-500/10 dark:bg-blue-500/5 backdrop-blur-sm lg:flex">
+              <FontAwesomeIcon icon={faCircleDot} className="h-1.5 w-1.5 animate-pulse text-blue-500" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400">Urban Analytics</span>
             </div>
             <button
               onClick={handleAddNew}
-              className="rounded-xl bg-emerald-500 px-6 py-3 text-sm font-bold text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all hover:bg-emerald-600 hover:scale-105 active:scale-95"
+              className="rounded-xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-[0_8px_20px_-4px_rgba(37,99,235,0.35)] transition-all hover:bg-blue-700 hover:scale-105 active:scale-95"
             >
               <FontAwesomeIcon icon={faPlus} className="mr-2" />
               Register City
@@ -134,10 +103,9 @@ export const Show = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
         {paginatedData.map((item) => (
           <div key={item.id} className="group relative overflow-hidden rounded-3xl border border-gray-100 bg-white p-6 shadow-theme-md transition-all hover:-translate-y-1 hover:shadow-theme-xl dark:border-white/5 dark:bg-gray-dark/80 backdrop-blur-sm">
-            <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-emerald-500/5 blur-3xl group-hover:bg-emerald-500/10 transition-colors"></div>
 
             <div className="flex items-start justify-between mb-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500 shadow-inner group-hover:scale-110 transition-transform">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-500/10 text-blue-500 shadow-inner group-hover:scale-110 transition-transform">
                 <FontAwesomeIcon icon={faCity} className="h-5 w-5" />
               </div>
               <span className={`inline-flex items-center rounded-full px-3 py-1 text-[10px] font-bold border backdrop-blur-md ${item.continentName === "AFRICA"
