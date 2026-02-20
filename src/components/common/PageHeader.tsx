@@ -23,8 +23,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
             <div className={`group relative mt-4 overflow-hidden rounded-2xl bg-gradient-to-br ${gradient} p-8 shadow-theme-lg transition-all duration-300 hover:shadow-theme-xl`}>
                 {/* Animated Background Pattern */}
                 <div className="absolute inset-0 opacity-10">
-                    <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white blur-3xl"></div>
-                    <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white blur-3xl"></div>
+                    <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-white/10"></div>
+                    <div className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-white/10"></div>
                 </div>
 
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">

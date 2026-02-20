@@ -224,7 +224,7 @@ export default function Home() {
             <Link
               key={index}
               to={stat.path || "#"}
-              className={`group relative block overflow-hidden rounded-2xl border border-gray-200/50 bg-white p-6 shadow-theme-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl ${stat.shadow} dark:border-gray-800 dark:bg-gray-dark/80`}
+              className={`group relative block overflow-hidden rounded-2xl border border-gray-200/50 bg-white p-6 shadow-theme-md transition-all duration-300 hover:-translate-y-1 hover:shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark/80`}
             >
               <div className={`absolute top-0 left-0 h-1 w-full ${stat.borderClass}`}></div>
               <div className="relative z-10 flex items-center justify-between">
@@ -278,7 +278,7 @@ export default function Home() {
                 key={index}
                 to={action.path}
                 state={{ openModal: true }}
-                className={`group relative overflow-hidden rounded-2xl border border-gray-100/50 bg-white p-6 shadow-theme-md transition-all duration-300 hover:-translate-y-2 hover:shadow-xl ${action.border} ${action.glow} dark:border-white/5 dark:bg-gray-dark/40 dark:backdrop-blur-md`}
+                className={`group relative overflow-hidden rounded-2xl border border-gray-100/50 bg-white p-6 shadow-theme-md transition-all duration-300 hover:-translate-y-2 hover:shadow-theme-lg dark:border-white/5 dark:bg-gray-dark/40`}
               >
                 <div className="relative z-10">
                   <div className={`flex h-12 w-12 items-center justify-center rounded-xl bg-${action.color}-500/5 backdrop-blur-sm transition-all group-hover:bg-${action.color}-500/10 group-hover:scale-110 dark:bg-white/5`}>
